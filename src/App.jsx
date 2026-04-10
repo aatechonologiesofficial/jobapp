@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from './lib/supabase'
 import './App.css'
 
@@ -9,8 +9,28 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [user, setUser] = useState(null)
+  const [turnstileToken, setTurnstileToken] = useState(null)
+
+  useEffect(() => {
+    const script = document.createElement('script')
+    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad'
+    script.async = true
+    document.head.appendChild(script)
+
+    window.onTurnstileLoad = () => {
+      window.turnstile.render('#turnstile-container', {
+        sitekey: '0x4AAAAAAC6H1V1ER1tT2Pwu',
+        callback: (token) => setTurnstileToken(token),
+        'refresh-expired': 'auto'
+      })
+    }
+  }, [])
 
   const sendOTP = async () => {
+    if (!turnstileToken) {
+      setMessage('Security check failed. Please refresh and try again.')
+      return
+    }
     setLoading(true)
     setMessage('')
     const { error } = await supabase.auth.signInWithOtp({ email })
@@ -64,6 +84,7 @@ function App() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
+          <div id="turnstile-container"></div>
           <button onClick={sendOTP} disabled={loading || !email}>
             {loading ? 'Sending...' : 'Send OTP'}
           </button>
