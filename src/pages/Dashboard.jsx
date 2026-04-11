@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import Avatar from '../components/Avatar'
+import CVBuilder from './CVBuilder'
+
 const API_URL = 'https://jobapp-api.aatechonologiesofficial.workers.dev'
 
 export default function Dashboard({ user }) {
@@ -87,6 +89,9 @@ export default function Dashboard({ user }) {
         <button className={`nav-tab ${activeTab === 'saved' ? 'active' : ''}`} onClick={() => setActiveTab('saved')}>
           💾 Saved ({savedJobs.length})
         </button>
+        <button className={`nav-tab ${activeTab === 'cv' ? 'active' : ''}`} onClick={() => setActiveTab('cv')}>
+          📝 CV
+        </button>
         <button className={`nav-tab ${activeTab === 'applied' ? 'active' : ''}`} onClick={() => setActiveTab('applied')}>
           📨 Applied
         </button>
@@ -97,7 +102,8 @@ export default function Dashboard({ user }) {
 
       {activeTab === 'search' && (
         <main className="dash-main">
-            <Avatar message={jobs.length > 0 ? `Commander, I found ${total.toLocaleString()} jobs for you!` : searched && !loading ? 'No jobs found, Commander. Try different keywords.' : ''} />
+          <Avatar message={jobs.length > 0 ? `Commander, I found ${total.toLocaleString()} jobs for you!` : searched && !loading ? 'No jobs found, Commander. Try different keywords.' : ''} />
+
           <div className="search-hero">
             <h2>Find Your Next Mission 🚀</h2>
             <p>Search real jobs across India</p>
@@ -223,6 +229,12 @@ export default function Dashboard({ user }) {
               ))}
             </div>
           )}
+        </main>
+      )}
+
+      {activeTab === 'cv' && (
+        <main className="dash-main">
+          <CVBuilder />
         </main>
       )}
 

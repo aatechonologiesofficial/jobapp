@@ -736,4 +736,443 @@ body {
   line-height: 1.5;
   margin-bottom: 14px;
   opacity: 0.7;
+}/* === CV BUILDER === */
+.cv-builder {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.cv-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.cv-header h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.cv-header p {
+  color: var(--text2);
+  font-size: 0.9rem;
+}
+
+.cv-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  margin-bottom: 20px;
+  padding-bottom: 4px;
+}
+
+.cv-tab {
+  padding: 10px 16px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  color: var(--text2);
+  font-size: 0.82rem;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.3s;
+}
+
+.cv-tab.active {
+  color: var(--accent2);
+  border-color: var(--accent2);
+  background: rgba(0, 229, 199, 0.08);
+}
+
+.cv-section {
+  animation: slideUp 0.4s ease;
+}
+
+.cv-section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 16px;
+}
+
+.cv-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 600px) {
+  .cv-form { grid-template-columns: 1fr; }
+}
+
+.cv-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cv-field.full {
+  grid-column: 1 / -1;
+}
+
+.cv-field label {
+  font-size: 0.82rem;
+  color: var(--text2);
+  font-weight: 500;
+}
+
+.cv-field input, .cv-field textarea {
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 0.92rem;
+  font-family: 'Outfit', sans-serif;
+  outline: none;
+  transition: all 0.3s;
+  resize: vertical;
+}
+
+.cv-field input:focus, .cv-field textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 20px rgba(124, 108, 240, 0.12);
+}
+
+.cv-field input::placeholder, .cv-field textarea::placeholder {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.cv-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 14px;
+  backdrop-filter: var(--blur);
+}
+
+.cv-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.cv-remove {
+  width: 28px;
+  height: 28px;
+  background: rgba(255, 68, 102, 0.1);
+  border: 1px solid rgba(255, 68, 102, 0.2);
+  border-radius: 8px;
+  color: var(--danger);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.cv-remove:hover {
+  background: rgba(255, 68, 102, 0.2);
+}
+
+.cv-inline-field {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.cv-inline-field input {
+  flex: 1;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 0.9rem;
+  font-family: 'Outfit', sans-serif;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.cv-inline-field input:focus {
+  border-color: var(--accent);
+}
+
+.cv-inline-field input::placeholder {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.cv-remove-sm {
+  width: 36px;
+  background: rgba(255, 68, 102, 0.1);
+  border: 1px solid rgba(255, 68, 102, 0.2);
+  border-radius: 10px;
+  color: var(--danger);
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.3s;
+}
+
+.cv-add-btn {
+  width: 100%;
+  padding: 10px;
+  background: rgba(0, 229, 199, 0.06);
+  border: 1px dashed rgba(0, 229, 199, 0.3);
+  border-radius: 10px;
+  color: var(--accent2);
+  font-size: 0.88rem;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  margin-bottom: 14px;
+  transition: all 0.3s;
+}
+
+.cv-add-btn:hover {
+  background: rgba(0, 229, 199, 0.12);
+}
+
+.cv-next-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--gradient1);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.3s;
+}
+
+.cv-next-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px var(--glow);
+}
+
+/* Template Picker */
+.cv-template-picker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  color: var(--text2);
+  font-size: 0.9rem;
+}
+
+.template-btn {
+  padding: 8px 16px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  color: var(--text2);
+  font-size: 0.82rem;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.template-btn.active {
+  color: var(--accent2);
+  border-color: var(--accent2);
+  background: rgba(0, 229, 199, 0.08);
+}
+
+/* CV Preview */
+.cv-preview-wrap {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+}
+
+.cv-preview {
+  padding: 40px;
+  color: #1a1a2e;
+  font-family: 'Outfit', sans-serif;
+  min-height: 600px;
+  background: white;
+}
+
+/* Modern Template */
+.cv-modern .cv-p-header {
+  border-bottom: 3px solid #7c6cf0;
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.cv-modern .cv-p-header h1 {
+  font-size: 1.8rem;
+  color: #1a1a2e;
+  margin-bottom: 8px;
+}
+
+.cv-modern .cv-p-contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.cv-modern .cv-p-section {
+  margin-bottom: 20px;
+}
+
+.cv-modern .cv-p-section h2 {
+  font-size: 1.1rem;
+  color: #7c6cf0;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 6px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Classic Template */
+.cv-classic .cv-p-header {
+  text-align: center;
+  border-bottom: 2px solid #1a1a2e;
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.cv-classic .cv-p-header h1 {
+  font-size: 2rem;
+  color: #1a1a2e;
+  margin-bottom: 8px;
+}
+
+.cv-classic .cv-p-contact {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.cv-classic .cv-p-section {
+  margin-bottom: 20px;
+}
+
+.cv-classic .cv-p-section h2 {
+  font-size: 1.1rem;
+  color: #1a1a2e;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 6px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+/* Minimal Template */
+.cv-minimal .cv-p-header {
+  margin-bottom: 24px;
+}
+
+.cv-minimal .cv-p-header h1 {
+  font-size: 1.6rem;
+  color: #1a1a2e;
+  font-weight: 300;
+  margin-bottom: 8px;
+}
+
+.cv-minimal .cv-p-contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 0.82rem;
+  color: #777;
+}
+
+.cv-minimal .cv-p-section {
+  margin-bottom: 20px;
+}
+
+.cv-minimal .cv-p-section h2 {
+  font-size: 0.9rem;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+/* Shared Preview Styles */
+.cv-p-item {
+  margin-bottom: 12px;
+}
+
+.cv-p-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cv-p-item-header strong {
+  font-size: 0.95rem;
+}
+
+.cv-p-item-header span {
+  font-size: 0.82rem;
+  color: #777;
+}
+
+.cv-p-item-sub {
+  font-size: 0.88rem;
+  color: #555;
+  margin-top: 2px;
+}
+
+.cv-p-desc {
+  font-size: 0.85rem;
+  color: #444;
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+.cv-p-section p {
+  font-size: 0.9rem;
+  color: #444;
+  line-height: 1.6;
+}
+
+.cv-p-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cv-p-tag {
+  padding: 4px 12px;
+  background: #f0f0f5;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  color: #444;
+}
+
+.cv-download-btn {
+  width: 100%;
+  padding: 16px;
+  background: var(--gradient1);
+  border: none;
+  border-radius: 14px;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.cv-download-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px var(--glow);
+}
+
+.cv-download-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
