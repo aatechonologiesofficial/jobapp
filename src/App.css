@@ -1175,4 +1175,22 @@ body {
 .cv-download-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}.ai-btn {
+  margin-top: 8px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #7c6cf0, #ff6b9d);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s;
+  align-self: flex-start;
+}
+
+.ai-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(124, 108, 240, 0.3);
 }

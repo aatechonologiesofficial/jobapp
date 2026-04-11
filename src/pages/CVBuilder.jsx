@@ -2,11 +2,14 @@ import { useState, useRef } from 'react'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 
+const API_URL = 'https://jobapp-api.aatechonologiesofficial.workers.dev'
+
 export default function CVBuilder() {
   const cvRef = useRef()
   const [activeSection, setActiveSection] = useState('personal')
   const [template, setTemplate] = useState('modern')
   const [generating, setGenerating] = useState(false)
+  const [improving, setImproving] = useState(null)
 
   const [cv, setCv] = useState({
     name: '',
@@ -48,6 +51,25 @@ export default function CVBuilder() {
     }))
   }
 
+  const improveWithAI = async (text, callback) => {
+    if (!text.trim()) return
+    setImproving(callback.toString())
+    try {
+      const res = await fetch(`${API_URL}/api/ai/improve`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+      })
+      const data = await res.json()
+      if (data.improved) {
+        callback(data.improved)
+      }
+    } catch (err) {
+      console.error('AI improve failed:', err)
+    }
+    setImproving(null)
+  }
+
   const downloadPDF = async () => {
     setGenerating(true)
     try {
@@ -84,7 +106,6 @@ export default function CVBuilder() {
         <p>Create a professional resume in minutes</p>
       </div>
 
-      {/* Section Tabs */}
       <div className="cv-tabs">
         {sections.map(s => (
           <button
@@ -97,7 +118,6 @@ export default function CVBuilder() {
         ))}
       </div>
 
-      {/* Personal Info */}
       {activeSection === 'personal' && (
         <div className="cv-section">
           <h3>Personal Information</h3>
@@ -121,13 +141,17 @@ export default function CVBuilder() {
             <div className="cv-field full">
               <label>Professional Summary</label>
               <textarea placeholder="Brief summary about yourself..." value={cv.summary} onChange={e => updateField('summary', e.target.value)} rows={4} />
+              {cv.summary && (
+                <button className="ai-btn" onClick={() => improveWithAI(cv.summary, (text) => updateField('summary', text))}>
+                  {improving ? '✨ Improving...' : '✨ AI Improve'}
+                </button>
+              )}
             </div>
           </div>
           <button className="cv-next-btn" onClick={() => setActiveSection('education')}>Next: Education →</button>
         </div>
       )}
 
-      {/* Education */}
       {activeSection === 'education' && (
         <div className="cv-section">
           <h3>Education</h3>
@@ -164,7 +188,6 @@ export default function CVBuilder() {
         </div>
       )}
 
-      {/* Experience */}
       {activeSection === 'experience' && (
         <div className="cv-section">
           <h3>Work Experience</h3>
@@ -192,6 +215,11 @@ export default function CVBuilder() {
                 <div className="cv-field full">
                   <label>Description</label>
                   <textarea placeholder="What did you do in this role?" value={exp.description} onChange={e => updateArrayItem('experience', i, 'description', e.target.value)} rows={3} />
+                  {exp.description && (
+                    <button className="ai-btn" onClick={() => improveWithAI(exp.description, (text) => updateArrayItem('experience', i, 'description', text))}>
+                      {improving ? '✨ Improving...' : '✨ AI Improve'}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -201,7 +229,6 @@ export default function CVBuilder() {
         </div>
       )}
 
-      {/* Skills */}
       {activeSection === 'skills' && (
         <div className="cv-section">
           <h3>Skills & Languages</h3>
@@ -248,7 +275,6 @@ export default function CVBuilder() {
         </div>
       )}
 
-      {/* Preview */}
       {activeSection === 'preview' && (
         <div className="cv-section">
           <div className="cv-template-picker">
@@ -262,7 +288,6 @@ export default function CVBuilder() {
 
           <div className="cv-preview-wrap">
             <div ref={cvRef} className={`cv-preview cv-${template}`}>
-              {/* Header */}
               <div className="cv-p-header">
                 <h1>{cv.name || 'Your Name'}</h1>
                 <div className="cv-p-contact">
@@ -272,7 +297,6 @@ export default function CVBuilder() {
                 </div>
               </div>
 
-              {/* Summary */}
               {cv.summary && (
                 <div className="cv-p-section">
                   <h2>Professional Summary</h2>
@@ -280,7 +304,6 @@ export default function CVBuilder() {
                 </div>
               )}
 
-              {/* Education */}
               {cv.education.some(e => e.degree) && (
                 <div className="cv-p-section">
                   <h2>Education</h2>
@@ -298,7 +321,6 @@ export default function CVBuilder() {
                 </div>
               )}
 
-              {/* Experience */}
               {cv.experience.some(e => e.title) && (
                 <div className="cv-p-section">
                   <h2>Work Experience</h2>
@@ -315,7 +337,6 @@ export default function CVBuilder() {
                 </div>
               )}
 
-              {/* Skills */}
               {cv.skills.some(s => s) && (
                 <div className="cv-p-section">
                   <h2>Skills</h2>
@@ -327,7 +348,6 @@ export default function CVBuilder() {
                 </div>
               )}
 
-              {/* Languages */}
               {cv.languages.some(l => l) && (
                 <div className="cv-p-section">
                   <h2>Languages</h2>
@@ -339,7 +359,6 @@ export default function CVBuilder() {
                 </div>
               )}
 
-              {/* Certifications */}
               {cv.certifications.some(c => c) && (
                 <div className="cv-p-section">
                   <h2>Certifications</h2>
