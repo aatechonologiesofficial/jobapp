@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import Avatar from '../components/Avatar'
+
 const API_URL = 'https://jobapp-api.aatechonologiesofficial.workers.dev'
 
 export default function Dashboard({ user }) {
@@ -97,7 +98,8 @@ export default function Dashboard({ user }) {
 
       {activeTab === 'search' && (
         <main className="dash-main">
-            <Avatar message={jobs.length > 0 ? `Commander, I found ${total.toLocaleString()} jobs for you!` : searched && !loading ? 'No jobs found, Commander. Try different keywords.' : ''} />
+          <Avatar message={jobs.length > 0 ? `Commander, I found ${total.toLocaleString()} jobs for you!` : searched && !loading ? 'No jobs found, Commander. Try different keywords.' : ''} />
+
           <div className="search-hero">
             <h2>Find Your Next Mission 🚀</h2>
             <p>Search real jobs across India</p>
