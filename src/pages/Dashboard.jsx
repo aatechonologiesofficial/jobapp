@@ -19,6 +19,7 @@ export default function Dashboard({ user }) {
   const [salaryMin, setSalaryMin] = useState('')
   const [salaryMax, setSalaryMax] = useState('')
   const [showFilters, setShowFilters] = useState(false)
+  const [source, setSource] = useState('all')
 
   const searchJobs = async (pageNum = 1) => {
     setLoading(true)
@@ -31,6 +32,7 @@ export default function Dashboard({ user }) {
       if (salaryMin) params.append('salary_min', salaryMin)
       if (salaryMax) params.append('salary_max', salaryMax)
       if (sortBy) params.append('sort', sortBy)
+      if (source) params.append('source', source)
       params.append('page', pageNum)
       const res = await fetch(`${API_URL}/api/jobs?${params}`)
       const data = await res.json()
@@ -83,6 +85,12 @@ export default function Dashboard({ user }) {
     { label: '10L+', min: '1000000', max: '' },
     { label: '20L+', min: '2000000', max: '' },
     { label: '50L+', min: '5000000', max: '' },
+  ]
+
+  const sourceOptions = [
+    { value: 'all', label: '🌐 All Sources' },
+    { value: 'adzuna', label: '🇮🇳 India Only' },
+    { value: 'remotive', label: '🌍 Remote (India Eligible)' },
   ]
 
   return (
@@ -155,6 +163,30 @@ export default function Dashboard({ user }) {
             </button>
           </div>
 
+          {/* Source Filter Quick Tabs */}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
+            {sourceOptions.map(opt => (
+              <button
+                key={opt.value}
+                onClick={() => { setSource(opt.value); if (searched) searchJobs(1); }}
+                style={{
+                  padding: '8px 16px',
+                  background: source === opt.value ? 'var(--accent)' : 'var(--surface)',
+                  border: '1px solid ' + (source === opt.value ? 'var(--accent)' : 'var(--border)'),
+                  borderRadius: '20px',
+                  color: source === opt.value ? 'white' : 'var(--text2)',
+                  fontSize: '0.8rem',
+                  fontFamily: 'Inter, sans-serif',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                  transition: 'all 0.3s'
+                }}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+
           {/* Filter Toggle */}
           <div style={{ textAlign: 'center', marginBottom: '16px' }}>
             <button
@@ -173,7 +205,7 @@ export default function Dashboard({ user }) {
                 textTransform: 'uppercase'
               }}
             >
-              ⚙️ Filters {showFilters ? '▲' : '▼'}
+              ⚙️ More Filters {showFilters ? '▲' : '▼'}
             </button>
           </div>
 
@@ -187,7 +219,6 @@ export default function Dashboard({ user }) {
               marginBottom: '20px',
               animation: 'slideUp 0.3s ease'
             }}>
-              {/* Sort By */}
               <div style={{ marginBottom: '16px' }}>
                 <label style={{ fontSize: '0.75rem', color: 'var(--text2)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px', display: 'block', marginBottom: '8px' }}>Sort By</label>
                 <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
@@ -217,7 +248,6 @@ export default function Dashboard({ user }) {
                 </div>
               </div>
 
-              {/* Salary Range */}
               <div>
                 <label style={{ fontSize: '0.75rem', color: 'var(--text2)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px', display: 'block', marginBottom: '8px' }}>Salary Range (Annual)</label>
                 <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
@@ -304,6 +334,7 @@ export default function Dashboard({ user }) {
                 </div>
                 <div className="job-tags">
                   <span className="tag">📍 {job.location}</span>
+                  <span className="tag" style={{ color: job.source === 'remotive' ? '#2D8A4E' : '#D4900D', fontWeight: '600' }}>📡 {job.source === 'remotive' ? 'Remote' : 'Adzuna'}</span>
                   {job.category && <span className="tag">💼 {job.category}</span>}
                   <span className="tag">🕐 {timeAgo(job.posted_at)}</span>
                   {formatSalary(job.salary_min, job.salary_max) && (
