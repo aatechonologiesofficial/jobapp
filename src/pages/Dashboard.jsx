@@ -14,18 +14,29 @@ export default function Dashboard({ user }) {
   const [savedJobs, setSavedJobs] = useState([])
   const [total, setTotal] = useState(0)
   const [searched, setSearched] = useState(false)
+  const [page, setPage] = useState(1)
+  const [sortBy, setSortBy] = useState('relevance')
+  const [salaryMin, setSalaryMin] = useState('')
+  const [salaryMax, setSalaryMax] = useState('')
+  const [showFilters, setShowFilters] = useState(false)
 
-  const searchJobs = async () => {
+  const searchJobs = async (pageNum = 1) => {
     setLoading(true)
     setSearched(true)
+    setPage(pageNum)
     try {
       const params = new URLSearchParams()
       if (keyword) params.append('keyword', keyword)
       if (location) params.append('location', location)
+      if (salaryMin) params.append('salary_min', salaryMin)
+      if (salaryMax) params.append('salary_max', salaryMax)
+      if (sortBy) params.append('sort', sortBy)
+      params.append('page', pageNum)
       const res = await fetch(`${API_URL}/api/jobs?${params}`)
       const data = await res.json()
       setJobs(data.jobs || [])
       setTotal(data.total || 0)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     } catch (err) {
       console.error('Search failed:', err)
       setJobs([])
@@ -64,6 +75,15 @@ export default function Dashboard({ user }) {
   const logout = async () => {
     await supabase.auth.signOut()
   }
+
+  const salaryPresets = [
+    { label: 'Any', min: '', max: '' },
+    { label: '3L+', min: '300000', max: '' },
+    { label: '5L+', min: '500000', max: '' },
+    { label: '10L+', min: '1000000', max: '' },
+    { label: '20L+', min: '2000000', max: '' },
+    { label: '50L+', min: '5000000', max: '' },
+  ]
 
   return (
     <div className="dashboard">
@@ -117,7 +137,7 @@ export default function Dashboard({ user }) {
                 placeholder="Job title, skill, or keyword"
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && searchJobs()}
+                onKeyDown={(e) => e.key === 'Enter' && searchJobs(1)}
               />
             </div>
             <div className="search-input-wrap">
@@ -127,13 +147,124 @@ export default function Dashboard({ user }) {
                 placeholder="City name"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && searchJobs()}
+                onKeyDown={(e) => e.key === 'Enter' && searchJobs(1)}
               />
             </div>
-            <button className="btn-search" onClick={searchJobs} disabled={loading}>
+            <button className="btn-search" onClick={() => searchJobs(1)} disabled={loading}>
               {loading ? '...' : 'Search'}
             </button>
           </div>
+
+          {/* Filter Toggle */}
+          <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              style={{
+                padding: '8px 20px',
+                background: showFilters ? 'var(--accent)' : 'var(--surface2)',
+                border: '1px solid var(--border)',
+                borderRadius: '20px',
+                color: showFilters ? 'white' : 'var(--text2)',
+                fontSize: '0.82rem',
+                fontFamily: 'Inter, sans-serif',
+                cursor: 'pointer',
+                fontWeight: '600',
+                letterSpacing: '1px',
+                textTransform: 'uppercase'
+              }}
+            >
+              ⚙️ Filters {showFilters ? '▲' : '▼'}
+            </button>
+          </div>
+
+          {/* Filters Panel */}
+          {showFilters && (
+            <div style={{
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
+              borderRadius: '16px',
+              padding: '20px',
+              marginBottom: '20px',
+              animation: 'slideUp 0.3s ease'
+            }}>
+              {/* Sort By */}
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ fontSize: '0.75rem', color: 'var(--text2)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px', display: 'block', marginBottom: '8px' }}>Sort By</label>
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                  {[
+                    { value: 'relevance', label: 'Relevance' },
+                    { value: 'date', label: 'Newest First' },
+                    { value: 'salary', label: 'Highest Salary' }
+                  ].map(opt => (
+                    <button
+                      key={opt.value}
+                      onClick={() => setSortBy(opt.value)}
+                      style={{
+                        padding: '8px 14px',
+                        background: sortBy === opt.value ? 'var(--accent)' : 'var(--surface2)',
+                        border: '1px solid ' + (sortBy === opt.value ? 'var(--accent)' : 'var(--border)'),
+                        borderRadius: '8px',
+                        color: sortBy === opt.value ? 'white' : 'var(--text2)',
+                        fontSize: '0.8rem',
+                        fontFamily: 'Inter, sans-serif',
+                        cursor: 'pointer',
+                        fontWeight: '500'
+                      }}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Salary Range */}
+              <div>
+                <label style={{ fontSize: '0.75rem', color: 'var(--text2)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px', display: 'block', marginBottom: '8px' }}>Salary Range (Annual)</label>
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                  {salaryPresets.map(preset => (
+                    <button
+                      key={preset.label}
+                      onClick={() => { setSalaryMin(preset.min); setSalaryMax(preset.max); }}
+                      style={{
+                        padding: '8px 14px',
+                        background: salaryMin === preset.min ? 'var(--accent)' : 'var(--surface2)',
+                        border: '1px solid ' + (salaryMin === preset.min ? 'var(--accent)' : 'var(--border)'),
+                        borderRadius: '8px',
+                        color: salaryMin === preset.min ? 'white' : 'var(--text2)',
+                        fontSize: '0.8rem',
+                        fontFamily: 'Inter, sans-serif',
+                        cursor: 'pointer',
+                        fontWeight: '500'
+                      }}
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                onClick={() => searchJobs(1)}
+                style={{
+                  width: '100%',
+                  marginTop: '16px',
+                  padding: '12px',
+                  background: 'var(--accent)',
+                  border: 'none',
+                  borderRadius: '10px',
+                  color: 'white',
+                  fontSize: '0.88rem',
+                  fontWeight: '700',
+                  fontFamily: 'Inter, sans-serif',
+                  cursor: 'pointer',
+                  letterSpacing: '1px',
+                  textTransform: 'uppercase'
+                }}
+              >
+                Apply Filters
+              </button>
+            </div>
+          )}
 
           {!searched && (
             <div className="no-results">
@@ -144,7 +275,7 @@ export default function Dashboard({ user }) {
 
           {searched && !loading && (
             <div className="results-count">
-              Found <strong>{total.toLocaleString()}</strong> jobs
+              Found <strong>{total.toLocaleString()}</strong> jobs — Page {page} of {Math.ceil(total / 20)}
             </div>
           )}
 
@@ -166,11 +297,15 @@ export default function Dashboard({ user }) {
                       <p className="company-name">{job.company}</p>
                     </div>
                   </div>
-                  <span className="time-ago">{timeAgo(job.posted_at)}</span>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '1.3rem', fontWeight: '800', color: job.trust_color || '#888', fontFamily: 'Cormorant Garamond, serif' }}>{job.trust_score || '--'}</div>
+                    <div style={{ fontSize: '0.65rem', color: job.trust_color || '#888', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase' }}>{job.trust_label || 'N/A'}</div>
+                  </div>
                 </div>
                 <div className="job-tags">
                   <span className="tag">📍 {job.location}</span>
                   {job.category && <span className="tag">💼 {job.category}</span>}
+                  <span className="tag">🕐 {timeAgo(job.posted_at)}</span>
                   {formatSalary(job.salary_min, job.salary_max) && (
                     <span className="tag salary-tag">{formatSalary(job.salary_min, job.salary_max)}</span>
                   )}
@@ -190,9 +325,31 @@ export default function Dashboard({ user }) {
             ))}
           </div>
 
+          {searched && !loading && jobs.length > 0 && (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '16px', marginTop: '24px', marginBottom: '20px' }}>
+              <button
+                className="btn-search"
+                style={{ padding: '10px 20px', opacity: page <= 1 ? 0.4 : 1 }}
+                disabled={page <= 1}
+                onClick={() => searchJobs(page - 1)}
+              >
+                ← Previous
+              </button>
+              <span style={{ color: '#888', fontSize: '0.85rem', fontWeight: '500' }}>Page {page} of {Math.ceil(total / 20)}</span>
+              <button
+                className="btn-search"
+                style={{ padding: '10px 20px', opacity: page >= Math.ceil(total / 20) ? 0.4 : 1 }}
+                disabled={page >= Math.ceil(total / 20)}
+                onClick={() => searchJobs(page + 1)}
+              >
+                Next →
+              </button>
+            </div>
+          )}
+
           {searched && !loading && jobs.length === 0 && (
             <div className="no-results">
-              <p>No jobs found. Try different keywords.</p>
+              <p>No jobs found. Try different keywords or city names instead of states.</p>
             </div>
           )}
         </main>
