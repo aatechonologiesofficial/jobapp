@@ -20,11 +20,15 @@ export default function Dashboard({ user }) {
   const [salaryMax, setSalaryMax] = useState('')
   const [showFilters, setShowFilters] = useState(false)
   const [source, setSource] = useState('all')
+  const [avatarPhase, setAvatarPhase] = useState('idle')
+  const [avatarMessage, setAvatarMessage] = useState('')
 
   const searchJobs = async (pageNum = 1) => {
     setLoading(true)
     setSearched(true)
     setPage(pageNum)
+    setAvatarPhase('checking')
+    setAvatarMessage('')
     try {
       const params = new URLSearchParams()
       if (keyword) params.append('keyword', keyword)
@@ -38,10 +42,21 @@ export default function Dashboard({ user }) {
       const data = await res.json()
       setJobs(data.jobs || [])
       setTotal(data.total || 0)
+      setTimeout(() => {
+        if (data.jobs && data.jobs.length > 0) {
+          setAvatarPhase('answering')
+          setAvatarMessage(`Commander, I found ${(data.total || 0).toLocaleString()} jobs for you!`)
+        } else {
+          setAvatarPhase('answering')
+          setAvatarMessage('No jobs found, Commander. Try different keywords.')
+        }
+      }, 2500)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } catch (err) {
       console.error('Search failed:', err)
       setJobs([])
+      setAvatarPhase('answering')
+      setAvatarMessage('Something went wrong, Commander. Please try again.')
     }
     setLoading(false)
   }
@@ -89,9 +104,20 @@ export default function Dashboard({ user }) {
 
   const sourceOptions = [
     { value: 'all', label: '🌐 All Sources' },
-    { value: 'adzuna', label: '🇮🇳 India Only' },
-    { value: 'remotive', label: '🌍 Remote (India Eligible)' },
+    { value: 'adzuna', label: '🇮🇳 Adzuna' },
+    { value: 'careerjet', label: '🇮🇳 CareerJet' },
+    { value: 'remotive', label: '🌍 Remote' },
   ]
+
+  const getSourceLabel = (src) => {
+    const labels = { adzuna: 'Adzuna', careerjet: 'CareerJet', remotive: 'Remote', arbeitnow: 'Arbeitnow', himalayas: 'Himalayas' }
+    return labels[src] || src
+  }
+
+  const getSourceColor = (src) => {
+    const colors = { adzuna: '#D4900D', careerjet: '#2D8A4E', remotive: '#6366f1', arbeitnow: '#0891b2', himalayas: '#9333ea' }
+    return colors[src] || '#888'
+  }
 
   return (
     <div className="dashboard">
@@ -130,7 +156,7 @@ export default function Dashboard({ user }) {
 
       {activeTab === 'search' && (
         <main className="dash-main">
-          <Avatar message={jobs.length > 0 ? `Commander, I found ${total.toLocaleString()} jobs for you!` : searched && !loading ? 'No jobs found, Commander. Try different keywords.' : ''} />
+          <Avatar message={avatarMessage} phase={avatarPhase} keyword={keyword} location={location} />
 
           <div className="search-hero">
             <h2>Find Your Next Mission 🚀</h2>
@@ -163,7 +189,6 @@ export default function Dashboard({ user }) {
             </button>
           </div>
 
-          {/* Source Filter Quick Tabs */}
           <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
             {sourceOptions.map(opt => (
               <button
@@ -187,7 +212,6 @@ export default function Dashboard({ user }) {
             ))}
           </div>
 
-          {/* Filter Toggle */}
           <div style={{ textAlign: 'center', marginBottom: '16px' }}>
             <button
               onClick={() => setShowFilters(!showFilters)}
@@ -209,7 +233,6 @@ export default function Dashboard({ user }) {
             </button>
           </div>
 
-          {/* Filters Panel */}
           {showFilters && (
             <div style={{
               background: 'var(--surface)',
@@ -334,7 +357,7 @@ export default function Dashboard({ user }) {
                 </div>
                 <div className="job-tags">
                   <span className="tag">📍 {job.location}</span>
-                  <span className="tag" style={{ color: job.source === 'remotive' ? '#2D8A4E' : '#D4900D', fontWeight: '600' }}>📡 {job.source === 'remotive' ? 'Remote' : 'Adzuna'}</span>
+                  <span className="tag" style={{ color: getSourceColor(job.source), fontWeight: '600' }}>📡 {getSourceLabel(job.source)}</span>
                   {job.category && <span className="tag">💼 {job.category}</span>}
                   <span className="tag">🕐 {timeAgo(job.posted_at)}</span>
                   {formatSalary(job.salary_min, job.salary_max) && (
