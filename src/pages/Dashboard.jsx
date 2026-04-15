@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import Avatar from '../components/Avatar'
 import CVBuilder from './CVBuilder'
+import MockInterview from './MockInterview'
 
 const API_URL = 'https://jobapp-api.aatechonologiesofficial.workers.dev'
 
@@ -145,6 +146,9 @@ export default function Dashboard({ user }) {
         </button>
         <button className={`nav-tab ${activeTab === 'cv' ? 'active' : ''}`} onClick={() => setActiveTab('cv')}>
           📝 CV
+        </button>
+        <button className={`nav-tab ${activeTab === 'interview' ? 'active' : ''}`} onClick={() => setActiveTab('interview')}>
+          🎤 Interview
         </button>
         <button className={`nav-tab ${activeTab === 'applied' ? 'active' : ''}`} onClick={() => setActiveTab('applied')}>
           📨 Applied
@@ -446,6 +450,12 @@ export default function Dashboard({ user }) {
       {activeTab === 'cv' && (
         <main className="dash-main">
           <CVBuilder />
+        </main>
+      )}
+
+      {activeTab === 'interview' && (
+        <main className="dash-main">
+          <MockInterview />
         </main>
       )}
 
