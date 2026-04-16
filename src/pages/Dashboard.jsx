@@ -3,6 +3,8 @@ import { supabase } from '../lib/supabase'
 import Avatar from '../components/Avatar'
 import CVBuilder from './CVBuilder'
 import MockInterview from './MockInterview'
+import CoverLetter from './CoverLetter'
+import SkillGap from './SkillGap'
 
 const API_URL = 'https://jobapp-api.aatechonologiesofficial.workers.dev'
 
@@ -23,6 +25,9 @@ export default function Dashboard({ user }) {
   const [source, setSource] = useState('all')
   const [avatarPhase, setAvatarPhase] = useState('idle')
   const [avatarMessage, setAvatarMessage] = useState('')
+  const [showCoverLetter, setShowCoverLetter] = useState(false)
+  const [showSkillGap, setShowSkillGap] = useState(false)
+  const [selectedJob, setSelectedJob] = useState(null)
 
   const searchJobs = async (pageNum = 1) => {
     setLoading(true)
@@ -170,23 +175,13 @@ export default function Dashboard({ user }) {
           <div className="search-bar">
             <div className="search-input-wrap">
               <span>🔍</span>
-              <input
-                type="text"
-                placeholder="Job title, skill, or keyword"
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && searchJobs(1)}
-              />
+              <input type="text" placeholder="Job title, skill, or keyword" value={keyword}
+                onChange={(e) => setKeyword(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && searchJobs(1)} />
             </div>
             <div className="search-input-wrap">
               <span>📍</span>
-              <input
-                type="text"
-                placeholder="City name"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && searchJobs(1)}
-              />
+              <input type="text" placeholder="City name" value={location}
+                onChange={(e) => setLocation(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && searchJobs(1)} />
             </div>
             <button className="btn-search" onClick={() => searchJobs(1)} disabled={loading}>
               {loading ? '...' : 'Search'}
@@ -195,129 +190,46 @@ export default function Dashboard({ user }) {
 
           <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
             {sourceOptions.map(opt => (
-              <button
-                key={opt.value}
-                onClick={() => { setSource(opt.value); if (searched) searchJobs(1); }}
-                style={{
-                  padding: '8px 16px',
-                  background: source === opt.value ? 'var(--accent)' : 'var(--surface)',
-                  border: '1px solid ' + (source === opt.value ? 'var(--accent)' : 'var(--border)'),
-                  borderRadius: '20px',
-                  color: source === opt.value ? 'white' : 'var(--text2)',
-                  fontSize: '0.8rem',
-                  fontFamily: 'Inter, sans-serif',
-                  cursor: 'pointer',
-                  fontWeight: '600',
-                  transition: 'all 0.3s'
-                }}
-              >
+              <button key={opt.value} onClick={() => { setSource(opt.value); if (searched) searchJobs(1); }}
+                style={{ padding: '8px 16px', background: source === opt.value ? 'var(--accent)' : 'var(--surface)', border: '1px solid ' + (source === opt.value ? 'var(--accent)' : 'var(--border)'), borderRadius: '20px', color: source === opt.value ? 'white' : 'var(--text2)', fontSize: '0.8rem', fontFamily: 'Inter, sans-serif', cursor: 'pointer', fontWeight: '600', transition: 'all 0.3s' }}>
                 {opt.label}
               </button>
             ))}
           </div>
 
           <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              style={{
-                padding: '8px 20px',
-                background: showFilters ? 'var(--accent)' : 'var(--surface2)',
-                border: '1px solid var(--border)',
-                borderRadius: '20px',
-                color: showFilters ? 'white' : 'var(--text2)',
-                fontSize: '0.82rem',
-                fontFamily: 'Inter, sans-serif',
-                cursor: 'pointer',
-                fontWeight: '600',
-                letterSpacing: '1px',
-                textTransform: 'uppercase'
-              }}
-            >
+            <button onClick={() => setShowFilters(!showFilters)}
+              style={{ padding: '8px 20px', background: showFilters ? 'var(--accent)' : 'var(--surface2)', border: '1px solid var(--border)', borderRadius: '20px', color: showFilters ? 'white' : 'var(--text2)', fontSize: '0.82rem', fontFamily: 'Inter, sans-serif', cursor: 'pointer', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase' }}>
               ⚙️ More Filters {showFilters ? '▲' : '▼'}
             </button>
           </div>
 
           {showFilters && (
-            <div style={{
-              background: 'var(--surface)',
-              border: '1px solid var(--border)',
-              borderRadius: '16px',
-              padding: '20px',
-              marginBottom: '20px',
-              animation: 'slideUp 0.3s ease'
-            }}>
+            <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '16px', padding: '20px', marginBottom: '20px', animation: 'slideUp 0.3s ease' }}>
               <div style={{ marginBottom: '16px' }}>
                 <label style={{ fontSize: '0.75rem', color: 'var(--text2)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px', display: 'block', marginBottom: '8px' }}>Sort By</label>
                 <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                  {[
-                    { value: 'relevance', label: 'Relevance' },
-                    { value: 'date', label: 'Newest First' },
-                    { value: 'salary', label: 'Highest Salary' }
-                  ].map(opt => (
-                    <button
-                      key={opt.value}
-                      onClick={() => setSortBy(opt.value)}
-                      style={{
-                        padding: '8px 14px',
-                        background: sortBy === opt.value ? 'var(--accent)' : 'var(--surface2)',
-                        border: '1px solid ' + (sortBy === opt.value ? 'var(--accent)' : 'var(--border)'),
-                        borderRadius: '8px',
-                        color: sortBy === opt.value ? 'white' : 'var(--text2)',
-                        fontSize: '0.8rem',
-                        fontFamily: 'Inter, sans-serif',
-                        cursor: 'pointer',
-                        fontWeight: '500'
-                      }}
-                    >
+                  {[{ value: 'relevance', label: 'Relevance' }, { value: 'date', label: 'Newest First' }, { value: 'salary', label: 'Highest Salary' }].map(opt => (
+                    <button key={opt.value} onClick={() => setSortBy(opt.value)}
+                      style={{ padding: '8px 14px', background: sortBy === opt.value ? 'var(--accent)' : 'var(--surface2)', border: '1px solid ' + (sortBy === opt.value ? 'var(--accent)' : 'var(--border)'), borderRadius: '8px', color: sortBy === opt.value ? 'white' : 'var(--text2)', fontSize: '0.8rem', fontFamily: 'Inter, sans-serif', cursor: 'pointer', fontWeight: '500' }}>
                       {opt.label}
                     </button>
                   ))}
                 </div>
               </div>
-
               <div>
                 <label style={{ fontSize: '0.75rem', color: 'var(--text2)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px', display: 'block', marginBottom: '8px' }}>Salary Range (Annual)</label>
                 <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                   {salaryPresets.map(preset => (
-                    <button
-                      key={preset.label}
-                      onClick={() => { setSalaryMin(preset.min); setSalaryMax(preset.max); }}
-                      style={{
-                        padding: '8px 14px',
-                        background: salaryMin === preset.min ? 'var(--accent)' : 'var(--surface2)',
-                        border: '1px solid ' + (salaryMin === preset.min ? 'var(--accent)' : 'var(--border)'),
-                        borderRadius: '8px',
-                        color: salaryMin === preset.min ? 'white' : 'var(--text2)',
-                        fontSize: '0.8rem',
-                        fontFamily: 'Inter, sans-serif',
-                        cursor: 'pointer',
-                        fontWeight: '500'
-                      }}
-                    >
+                    <button key={preset.label} onClick={() => { setSalaryMin(preset.min); setSalaryMax(preset.max); }}
+                      style={{ padding: '8px 14px', background: salaryMin === preset.min ? 'var(--accent)' : 'var(--surface2)', border: '1px solid ' + (salaryMin === preset.min ? 'var(--accent)' : 'var(--border)'), borderRadius: '8px', color: salaryMin === preset.min ? 'white' : 'var(--text2)', fontSize: '0.8rem', fontFamily: 'Inter, sans-serif', cursor: 'pointer', fontWeight: '500' }}>
                       {preset.label}
                     </button>
                   ))}
                 </div>
               </div>
-
-              <button
-                onClick={() => searchJobs(1)}
-                style={{
-                  width: '100%',
-                  marginTop: '16px',
-                  padding: '12px',
-                  background: 'var(--accent)',
-                  border: 'none',
-                  borderRadius: '10px',
-                  color: 'white',
-                  fontSize: '0.88rem',
-                  fontWeight: '700',
-                  fontFamily: 'Inter, sans-serif',
-                  cursor: 'pointer',
-                  letterSpacing: '1px',
-                  textTransform: 'uppercase'
-                }}
-              >
+              <button onClick={() => searchJobs(1)}
+                style={{ width: '100%', marginTop: '16px', padding: '12px', background: 'var(--accent)', border: 'none', borderRadius: '10px', color: 'white', fontSize: '0.88rem', fontWeight: '700', fontFamily: 'Inter, sans-serif', cursor: 'pointer', letterSpacing: '1px', textTransform: 'uppercase' }}>
                 Apply Filters
               </button>
             </div>
@@ -378,6 +290,14 @@ export default function Dashboard({ user }) {
                   <button className="btn-save" onClick={() => saveJob(job)}>
                     {savedJobs.find(j => j.id === job.id) ? '✅ Saved' : '💾 Save'}
                   </button>
+                  <button className="btn-save" onClick={() => { setSelectedJob(job); setShowCoverLetter(true) }}
+                    style={{ color: 'var(--accent)', borderColor: 'var(--accent)' }}>
+                    ✉️ Letter
+                  </button>
+                  <button className="btn-save" onClick={() => { setSelectedJob(job); setShowSkillGap(true) }}
+                    style={{ color: '#6366f1', borderColor: '#6366f1' }}>
+                    🎯 Skills
+                  </button>
                 </div>
               </div>
             ))}
@@ -385,21 +305,11 @@ export default function Dashboard({ user }) {
 
           {searched && !loading && jobs.length > 0 && (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '16px', marginTop: '24px', marginBottom: '20px' }}>
-              <button
-                className="btn-search"
-                style={{ padding: '10px 20px', opacity: page <= 1 ? 0.4 : 1 }}
-                disabled={page <= 1}
-                onClick={() => searchJobs(page - 1)}
-              >
+              <button className="btn-search" style={{ padding: '10px 20px', opacity: page <= 1 ? 0.4 : 1 }} disabled={page <= 1} onClick={() => searchJobs(page - 1)}>
                 ← Previous
               </button>
               <span style={{ color: '#888', fontSize: '0.85rem', fontWeight: '500' }}>Page {page} of {Math.ceil(total / 20)}</span>
-              <button
-                className="btn-search"
-                style={{ padding: '10px 20px', opacity: page >= Math.ceil(total / 20) ? 0.4 : 1 }}
-                disabled={page >= Math.ceil(total / 20)}
-                onClick={() => searchJobs(page + 1)}
-              >
+              <button className="btn-search" style={{ padding: '10px 20px', opacity: page >= Math.ceil(total / 20) ? 0.4 : 1 }} disabled={page >= Math.ceil(total / 20)} onClick={() => searchJobs(page + 1)}>
                 Next →
               </button>
             </div>
@@ -439,6 +349,14 @@ export default function Dashboard({ user }) {
                   </div>
                   <div className="job-card-actions">
                     <button className="btn-apply" onClick={() => window.open(job.url, '_blank')}>Apply Now →</button>
+                    <button className="btn-save" onClick={() => { setSelectedJob(job); setShowCoverLetter(true) }}
+                      style={{ color: 'var(--accent)', borderColor: 'var(--accent)' }}>
+                      ✉️ Letter
+                    </button>
+                    <button className="btn-save" onClick={() => { setSelectedJob(job); setShowSkillGap(true) }}
+                      style={{ color: '#6366f1', borderColor: '#6366f1' }}>
+                      🎯 Skills
+                    </button>
                   </div>
                 </div>
               ))}
@@ -489,6 +407,14 @@ export default function Dashboard({ user }) {
             </div>
           </div>
         </main>
+      )}
+
+      {showCoverLetter && selectedJob && (
+        <CoverLetter job={selectedJob} onClose={() => setShowCoverLetter(false)} />
+      )}
+
+      {showSkillGap && selectedJob && (
+        <SkillGap job={selectedJob} onClose={() => setShowSkillGap(false)} />
       )}
     </div>
   )
