@@ -5,6 +5,8 @@ import CVBuilder from './CVBuilder'
 import MockInterview from './MockInterview'
 import CoverLetter from './CoverLetter'
 import SkillGap from './SkillGap'
+import CareerQuiz from './CareerQuiz'
+import ATSScanner from './ATSScanner'
 
 const API_URL = 'https://jobapp-api.aatechonologiesofficial.workers.dev'
 
@@ -143,24 +145,14 @@ export default function Dashboard({ user }) {
       </header>
 
       <nav className="dash-nav">
-        <button className={`nav-tab ${activeTab === 'search' ? 'active' : ''}`} onClick={() => setActiveTab('search')}>
-          🔍 Search
-        </button>
-        <button className={`nav-tab ${activeTab === 'saved' ? 'active' : ''}`} onClick={() => setActiveTab('saved')}>
-          💾 Saved ({savedJobs.length})
-        </button>
-        <button className={`nav-tab ${activeTab === 'cv' ? 'active' : ''}`} onClick={() => setActiveTab('cv')}>
-          📝 CV
-        </button>
-        <button className={`nav-tab ${activeTab === 'interview' ? 'active' : ''}`} onClick={() => setActiveTab('interview')}>
-          🎤 Interview
-        </button>
-        <button className={`nav-tab ${activeTab === 'applied' ? 'active' : ''}`} onClick={() => setActiveTab('applied')}>
-          📨 Applied
-        </button>
-        <button className={`nav-tab ${activeTab === 'profile' ? 'active' : ''}`} onClick={() => setActiveTab('profile')}>
-          👤 Profile
-        </button>
+        <button className={`nav-tab ${activeTab === 'search' ? 'active' : ''}`} onClick={() => setActiveTab('search')}>🔍 Search</button>
+        <button className={`nav-tab ${activeTab === 'saved' ? 'active' : ''}`} onClick={() => setActiveTab('saved')}>💾 Saved ({savedJobs.length})</button>
+        <button className={`nav-tab ${activeTab === 'cv' ? 'active' : ''}`} onClick={() => setActiveTab('cv')}>📝 CV</button>
+        <button className={`nav-tab ${activeTab === 'interview' ? 'active' : ''}`} onClick={() => setActiveTab('interview')}>🎤 Interview</button>
+        <button className={`nav-tab ${activeTab === 'career' ? 'active' : ''}`} onClick={() => setActiveTab('career')}>🧭 Career</button>
+        <button className={`nav-tab ${activeTab === 'ats' ? 'active' : ''}`} onClick={() => setActiveTab('ats')}>📊 ATS</button>
+        <button className={`nav-tab ${activeTab === 'applied' ? 'active' : ''}`} onClick={() => setActiveTab('applied')}>📨 Applied</button>
+        <button className={`nav-tab ${activeTab === 'profile' ? 'active' : ''}`} onClick={() => setActiveTab('profile')}>👤 Profile</button>
       </nav>
 
       {activeTab === 'search' && (
@@ -243,9 +235,7 @@ export default function Dashboard({ user }) {
           )}
 
           {searched && !loading && (
-            <div className="results-count">
-              Found <strong>{total.toLocaleString()}</strong> jobs — Page {page} of {Math.ceil(total / 20)}
-            </div>
+            <div className="results-count">Found <strong>{total.toLocaleString()}</strong> jobs — Page {page} of {Math.ceil(total / 20)}</div>
           )}
 
           {loading && (
@@ -280,24 +270,16 @@ export default function Dashboard({ user }) {
                     <span className="tag salary-tag">{formatSalary(job.salary_min, job.salary_max)}</span>
                   )}
                 </div>
-                {job.description && (
-                  <p className="job-desc">{job.description}</p>
-                )}
+                {job.description && <p className="job-desc">{job.description}</p>}
                 <div className="job-card-actions">
-                  <button className="btn-apply" onClick={() => window.open(job.url, '_blank')}>
-                    Apply Now →
-                  </button>
+                  <button className="btn-apply" onClick={() => window.open(job.url, '_blank')}>Apply Now →</button>
                   <button className="btn-save" onClick={() => saveJob(job)}>
                     {savedJobs.find(j => j.id === job.id) ? '✅ Saved' : '💾 Save'}
                   </button>
                   <button className="btn-save" onClick={() => { setSelectedJob(job); setShowCoverLetter(true) }}
-                    style={{ color: 'var(--accent)', borderColor: 'var(--accent)' }}>
-                    ✉️ Letter
-                  </button>
+                    style={{ color: 'var(--accent)', borderColor: 'var(--accent)' }}>✉️ Letter</button>
                   <button className="btn-save" onClick={() => { setSelectedJob(job); setShowSkillGap(true) }}
-                    style={{ color: '#6366f1', borderColor: '#6366f1' }}>
-                    🎯 Skills
-                  </button>
+                    style={{ color: '#6366f1', borderColor: '#6366f1' }}>🎯 Skills</button>
                 </div>
               </div>
             ))}
@@ -305,20 +287,14 @@ export default function Dashboard({ user }) {
 
           {searched && !loading && jobs.length > 0 && (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '16px', marginTop: '24px', marginBottom: '20px' }}>
-              <button className="btn-search" style={{ padding: '10px 20px', opacity: page <= 1 ? 0.4 : 1 }} disabled={page <= 1} onClick={() => searchJobs(page - 1)}>
-                ← Previous
-              </button>
+              <button className="btn-search" style={{ padding: '10px 20px', opacity: page <= 1 ? 0.4 : 1 }} disabled={page <= 1} onClick={() => searchJobs(page - 1)}>← Previous</button>
               <span style={{ color: '#888', fontSize: '0.85rem', fontWeight: '500' }}>Page {page} of {Math.ceil(total / 20)}</span>
-              <button className="btn-search" style={{ padding: '10px 20px', opacity: page >= Math.ceil(total / 20) ? 0.4 : 1 }} disabled={page >= Math.ceil(total / 20)} onClick={() => searchJobs(page + 1)}>
-                Next →
-              </button>
+              <button className="btn-search" style={{ padding: '10px 20px', opacity: page >= Math.ceil(total / 20) ? 0.4 : 1 }} disabled={page >= Math.ceil(total / 20)} onClick={() => searchJobs(page + 1)}>Next →</button>
             </div>
           )}
 
           {searched && !loading && jobs.length === 0 && (
-            <div className="no-results">
-              <p>No jobs found. Try different keywords or city names instead of states.</p>
-            </div>
+            <div className="no-results"><p>No jobs found. Try different keywords or city names instead of states.</p></div>
           )}
         </main>
       )}
@@ -350,13 +326,9 @@ export default function Dashboard({ user }) {
                   <div className="job-card-actions">
                     <button className="btn-apply" onClick={() => window.open(job.url, '_blank')}>Apply Now →</button>
                     <button className="btn-save" onClick={() => { setSelectedJob(job); setShowCoverLetter(true) }}
-                      style={{ color: 'var(--accent)', borderColor: 'var(--accent)' }}>
-                      ✉️ Letter
-                    </button>
+                      style={{ color: 'var(--accent)', borderColor: 'var(--accent)' }}>✉️ Letter</button>
                     <button className="btn-save" onClick={() => { setSelectedJob(job); setShowSkillGap(true) }}
-                      style={{ color: '#6366f1', borderColor: '#6366f1' }}>
-                      🎯 Skills
-                    </button>
+                      style={{ color: '#6366f1', borderColor: '#6366f1' }}>🎯 Skills</button>
                   </div>
                 </div>
               ))}
@@ -365,17 +337,10 @@ export default function Dashboard({ user }) {
         </main>
       )}
 
-      {activeTab === 'cv' && (
-        <main className="dash-main">
-          <CVBuilder />
-        </main>
-      )}
-
-      {activeTab === 'interview' && (
-        <main className="dash-main">
-          <MockInterview />
-        </main>
-      )}
+      {activeTab === 'cv' && <main className="dash-main"><CVBuilder /></main>}
+      {activeTab === 'interview' && <main className="dash-main"><MockInterview /></main>}
+      {activeTab === 'career' && <main className="dash-main"><CareerQuiz /></main>}
+      {activeTab === 'ats' && <main className="dash-main"><ATSScanner /></main>}
 
       {activeTab === 'applied' && (
         <main className="dash-main">
@@ -392,30 +357,16 @@ export default function Dashboard({ user }) {
             <h3>{user.email}</h3>
             <p className="profile-status">Commander Status: Active</p>
             <div className="profile-stats">
-              <div className="stat">
-                <strong>{savedJobs.length}</strong>
-                <span>Saved</span>
-              </div>
-              <div className="stat">
-                <strong>0</strong>
-                <span>Applied</span>
-              </div>
-              <div className="stat">
-                <strong>0</strong>
-                <span>Interviews</span>
-              </div>
+              <div className="stat"><strong>{savedJobs.length}</strong><span>Saved</span></div>
+              <div className="stat"><strong>0</strong><span>Applied</span></div>
+              <div className="stat"><strong>0</strong><span>Interviews</span></div>
             </div>
           </div>
         </main>
       )}
 
-      {showCoverLetter && selectedJob && (
-        <CoverLetter job={selectedJob} onClose={() => setShowCoverLetter(false)} />
-      )}
-
-      {showSkillGap && selectedJob && (
-        <SkillGap job={selectedJob} onClose={() => setShowSkillGap(false)} />
-      )}
+      {showCoverLetter && selectedJob && <CoverLetter job={selectedJob} onClose={() => setShowCoverLetter(false)} />}
+      {showSkillGap && selectedJob && <SkillGap job={selectedJob} onClose={() => setShowSkillGap(false)} />}
     </div>
   )
 }
