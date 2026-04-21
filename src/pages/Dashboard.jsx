@@ -9,6 +9,7 @@ import CareerQuiz from './CareerQuiz'
 import ATSScanner from './ATSScanner'
 import LinkedInOptimizer from './LinkedInOptimizer'
 import JDDecoder from './JDDecoder'
+import CompanyDive from './CompanyDive'
 
 const API_URL = 'https://jobapp-api.aatechonologiesofficial.workers.dev'
 
@@ -32,14 +33,11 @@ export default function Dashboard({ user }) {
   const [showCoverLetter, setShowCoverLetter] = useState(false)
   const [showSkillGap, setShowSkillGap] = useState(false)
   const [showJDDecoder, setShowJDDecoder] = useState(false)
+  const [showCompanyDive, setShowCompanyDive] = useState(false)
   const [selectedJob, setSelectedJob] = useState(null)
 
   const searchJobs = async (pageNum = 1) => {
-    setLoading(true)
-    setSearched(true)
-    setPage(pageNum)
-    setAvatarPhase('checking')
-    setAvatarMessage('')
+    setLoading(true); setSearched(true); setPage(pageNum); setAvatarPhase('checking'); setAvatarMessage('')
     try {
       const params = new URLSearchParams()
       if (keyword) params.append('keyword', keyword)
@@ -51,63 +49,35 @@ export default function Dashboard({ user }) {
       params.append('page', pageNum)
       const res = await fetch(`${API_URL}/api/jobs?${params}`)
       const data = await res.json()
-      setJobs(data.jobs || [])
-      setTotal(data.total || 0)
+      setJobs(data.jobs || []); setTotal(data.total || 0)
       setTimeout(() => {
-        if (data.jobs && data.jobs.length > 0) {
-          setAvatarPhase('answering')
-          setAvatarMessage(`Commander, I found ${(data.total || 0).toLocaleString()} jobs for you!`)
-        } else {
-          setAvatarPhase('answering')
-          setAvatarMessage('No jobs found, Commander. Try different keywords.')
-        }
+        if (data.jobs?.length > 0) { setAvatarPhase('answering'); setAvatarMessage(`Commander, I found ${(data.total || 0).toLocaleString()} jobs for you!`) }
+        else { setAvatarPhase('answering'); setAvatarMessage('No jobs found, Commander. Try different keywords.') }
       }, 2500)
       window.scrollTo({ top: 0, behavior: 'smooth' })
-    } catch (err) {
-      console.error('Search failed:', err)
-      setJobs([])
-      setAvatarPhase('answering')
-      setAvatarMessage('Something went wrong, Commander. Please try again.')
-    }
+    } catch (err) { setJobs([]); setAvatarPhase('answering'); setAvatarMessage('Something went wrong, Commander.') }
     setLoading(false)
   }
 
-  const saveJob = (job) => {
-    if (!savedJobs.find(j => j.id === job.id)) setSavedJobs([...savedJobs, job])
-  }
+  const saveJob = (job) => { if (!savedJobs.find(j => j.id === job.id)) setSavedJobs([...savedJobs, job]) }
 
   const formatSalary = (min, max) => {
     if (!min && !max) return null
     const fmt = (n) => { if (n >= 100000) return `₹${(n/100000).toFixed(1)}L`; if (n >= 1000) return `₹${(n/1000).toFixed(0)}K`; return `₹${n}` }
-    if (min && max) return `${fmt(min)} - ${fmt(max)}`
-    if (min) return `From ${fmt(min)}`
-    if (max) return `Up to ${fmt(max)}`
+    if (min && max) return `${fmt(min)} - ${fmt(max)}`; if (min) return `From ${fmt(min)}`; if (max) return `Up to ${fmt(max)}`
   }
 
   const timeAgo = (date) => {
-    if (!date) return ''
-    const diff = Date.now() - new Date(date).getTime()
-    const days = Math.floor(diff / 86400000)
-    if (days === 0) return 'Today'
-    if (days === 1) return 'Yesterday'
-    if (days < 30) return `${days}d ago`
-    return `${Math.floor(days / 30)}mo ago`
+    if (!date) return ''; const diff = Date.now() - new Date(date).getTime(); const days = Math.floor(diff / 86400000)
+    if (days === 0) return 'Today'; if (days === 1) return 'Yesterday'; if (days < 30) return `${days}d ago`; return `${Math.floor(days / 30)}mo ago`
   }
 
   const logout = async () => { await supabase.auth.signOut() }
 
-  const salaryPresets = [
-    { label: 'Any', min: '', max: '' }, { label: '3L+', min: '300000', max: '' }, { label: '5L+', min: '500000', max: '' },
-    { label: '10L+', min: '1000000', max: '' }, { label: '20L+', min: '2000000', max: '' }, { label: '50L+', min: '5000000', max: '' },
-  ]
-
-  const sourceOptions = [
-    { value: 'all', label: '🌐 All' }, { value: 'adzuna', label: '🇮🇳 Adzuna' },
-    { value: 'careerjet', label: '🇮🇳 CareerJet' }, { value: 'remotive', label: '🌍 Remote' },
-  ]
-
-  const getSourceLabel = (src) => ({ adzuna: 'Adzuna', careerjet: 'CareerJet', remotive: 'Remote', arbeitnow: 'Arbeitnow', himalayas: 'Himalayas' }[src] || src)
-  const getSourceColor = (src) => ({ adzuna: '#D4900D', careerjet: '#2D8A4E', remotive: '#6366f1', arbeitnow: '#0891b2', himalayas: '#9333ea' }[src] || '#888')
+  const salaryPresets = [{ label: 'Any', min: '', max: '' }, { label: '3L+', min: '300000', max: '' }, { label: '5L+', min: '500000', max: '' }, { label: '10L+', min: '1000000', max: '' }, { label: '20L+', min: '2000000', max: '' }, { label: '50L+', min: '5000000', max: '' }]
+  const sourceOptions = [{ value: 'all', label: '🌐 All' }, { value: 'adzuna', label: '🇮🇳 Adzuna' }, { value: 'careerjet', label: '🇮🇳 CareerJet' }, { value: 'remotive', label: '🌍 Remote' }]
+  const getSourceLabel = (s) => ({ adzuna: 'Adzuna', careerjet: 'CareerJet', remotive: 'Remote', arbeitnow: 'Arbeitnow', himalayas: 'Himalayas' }[s] || s)
+  const getSourceColor = (s) => ({ adzuna: '#D4900D', careerjet: '#2D8A4E', remotive: '#6366f1', arbeitnow: '#0891b2', himalayas: '#9333ea' }[s] || '#888')
 
   return (
     <div className="dashboard">
@@ -138,21 +108,15 @@ export default function Dashboard({ user }) {
           <div className="search-hero"><h2>Find Your Next Mission 🚀</h2><p>Search real jobs across India</p></div>
 
           <div className="search-bar">
-            <div className="search-input-wrap"><span>🔍</span>
-              <input type="text" placeholder="Job title, skill, or keyword" value={keyword} onChange={(e) => setKeyword(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && searchJobs(1)} />
-            </div>
-            <div className="search-input-wrap"><span>📍</span>
-              <input type="text" placeholder="City name" value={location} onChange={(e) => setLocation(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && searchJobs(1)} />
-            </div>
+            <div className="search-input-wrap"><span>🔍</span><input type="text" placeholder="Job title, skill, or keyword" value={keyword} onChange={(e) => setKeyword(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && searchJobs(1)} /></div>
+            <div className="search-input-wrap"><span>📍</span><input type="text" placeholder="City name" value={location} onChange={(e) => setLocation(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && searchJobs(1)} /></div>
             <button className="btn-search" onClick={() => searchJobs(1)} disabled={loading}>{loading ? '...' : 'Search'}</button>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
             {sourceOptions.map(opt => (
-              <button key={opt.value} onClick={() => { setSource(opt.value); if (searched) searchJobs(1); }}
-                style={{ padding: '8px 16px', background: source === opt.value ? 'var(--accent)' : 'var(--surface)', border: '1px solid ' + (source === opt.value ? 'var(--accent)' : 'var(--border)'), borderRadius: '20px', color: source === opt.value ? 'white' : 'var(--text2)', fontSize: '0.8rem', fontFamily: 'Inter, sans-serif', cursor: 'pointer', fontWeight: '600', transition: 'all 0.3s' }}>
-                {opt.label}
-              </button>
+              <button key={opt.value} onClick={() => { setSource(opt.value); if (searched) searchJobs(1) }}
+                style={{ padding: '8px 16px', background: source === opt.value ? 'var(--accent)' : 'var(--surface)', border: '1px solid ' + (source === opt.value ? 'var(--accent)' : 'var(--border)'), borderRadius: '20px', color: source === opt.value ? 'white' : 'var(--text2)', fontSize: '0.8rem', fontFamily: 'Inter, sans-serif', cursor: 'pointer', fontWeight: '600', transition: 'all 0.3s' }}>{opt.label}</button>
             ))}
           </div>
 
@@ -169,10 +133,7 @@ export default function Dashboard({ user }) {
                 <label style={{ fontSize: '0.75rem', color: 'var(--text2)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px', display: 'block', marginBottom: '8px' }}>Sort By</label>
                 <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                   {[{ value: 'relevance', label: 'Relevance' }, { value: 'date', label: 'Newest' }, { value: 'salary', label: 'Salary' }].map(opt => (
-                    <button key={opt.value} onClick={() => setSortBy(opt.value)}
-                      style={{ padding: '8px 14px', background: sortBy === opt.value ? 'var(--accent)' : 'var(--surface2)', border: '1px solid ' + (sortBy === opt.value ? 'var(--accent)' : 'var(--border)'), borderRadius: '8px', color: sortBy === opt.value ? 'white' : 'var(--text2)', fontSize: '0.8rem', fontFamily: 'Inter, sans-serif', cursor: 'pointer', fontWeight: '500' }}>
-                      {opt.label}
-                    </button>
+                    <button key={opt.value} onClick={() => setSortBy(opt.value)} style={{ padding: '8px 14px', background: sortBy === opt.value ? 'var(--accent)' : 'var(--surface2)', border: '1px solid ' + (sortBy === opt.value ? 'var(--accent)' : 'var(--border)'), borderRadius: '8px', color: sortBy === opt.value ? 'white' : 'var(--text2)', fontSize: '0.8rem', fontFamily: 'Inter, sans-serif', cursor: 'pointer', fontWeight: '500' }}>{opt.label}</button>
                   ))}
                 </div>
               </div>
@@ -180,10 +141,7 @@ export default function Dashboard({ user }) {
                 <label style={{ fontSize: '0.75rem', color: 'var(--text2)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px', display: 'block', marginBottom: '8px' }}>Salary</label>
                 <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                   {salaryPresets.map(p => (
-                    <button key={p.label} onClick={() => { setSalaryMin(p.min); setSalaryMax(p.max); }}
-                      style={{ padding: '8px 14px', background: salaryMin === p.min ? 'var(--accent)' : 'var(--surface2)', border: '1px solid ' + (salaryMin === p.min ? 'var(--accent)' : 'var(--border)'), borderRadius: '8px', color: salaryMin === p.min ? 'white' : 'var(--text2)', fontSize: '0.8rem', fontFamily: 'Inter, sans-serif', cursor: 'pointer', fontWeight: '500' }}>
-                      {p.label}
-                    </button>
+                    <button key={p.label} onClick={() => { setSalaryMin(p.min); setSalaryMax(p.max) }} style={{ padding: '8px 14px', background: salaryMin === p.min ? 'var(--accent)' : 'var(--surface2)', border: '1px solid ' + (salaryMin === p.min ? 'var(--accent)' : 'var(--border)'), borderRadius: '8px', color: salaryMin === p.min ? 'white' : 'var(--text2)', fontSize: '0.8rem', fontFamily: 'Inter, sans-serif', cursor: 'pointer', fontWeight: '500' }}>{p.label}</button>
                   ))}
                 </div>
               </div>
@@ -192,8 +150,8 @@ export default function Dashboard({ user }) {
           )}
 
           {!searched && <div className="no-results"><p>🔍 Search for jobs to get started!</p><p style={{ fontSize: '0.85rem', marginTop: '8px', opacity: 0.6 }}>Try "developer" in "hyderabad"</p></div>}
-          {searched && !loading && <div className="results-count">Found <strong>{total.toLocaleString()}</strong> jobs — Page {page} of {Math.ceil(total / 20)}</div>}
-          {loading && <div className="no-results"><div className="spinner" style={{ margin: '0 auto 16px', width: '30px', height: '30px' }}></div><p>Searching jobs...</p></div>}
+          {searched && !loading && <div className="results-count">Found <strong>{total.toLocaleString()}</strong> jobs — Page {page}/{Math.ceil(total / 20)}</div>}
+          {loading && <div className="no-results"><div className="spinner" style={{ margin: '0 auto 16px', width: '30px', height: '30px' }}></div><p>Searching...</p></div>}
 
           <div className="job-grid">
             {jobs.map((job, i) => (
@@ -222,6 +180,7 @@ export default function Dashboard({ user }) {
                   <button className="btn-save" onClick={() => { setSelectedJob(job); setShowCoverLetter(true) }} style={{ color: 'var(--accent)', borderColor: 'var(--accent)' }}>✉️</button>
                   <button className="btn-save" onClick={() => { setSelectedJob(job); setShowSkillGap(true) }} style={{ color: '#6366f1', borderColor: '#6366f1' }}>🎯</button>
                   <button className="btn-save" onClick={() => { setSelectedJob(job); setShowJDDecoder(true) }} style={{ color: '#D4900D', borderColor: '#D4900D' }}>🔍</button>
+                  <button className="btn-save" onClick={() => { setSelectedJob(job); setShowCompanyDive(true) }} style={{ color: '#2D8A4E', borderColor: '#2D8A4E' }}>🏢</button>
                 </div>
               </div>
             ))}
@@ -260,6 +219,7 @@ export default function Dashboard({ user }) {
                     <button className="btn-save" onClick={() => { setSelectedJob(job); setShowCoverLetter(true) }} style={{ color: 'var(--accent)', borderColor: 'var(--accent)' }}>✉️</button>
                     <button className="btn-save" onClick={() => { setSelectedJob(job); setShowSkillGap(true) }} style={{ color: '#6366f1', borderColor: '#6366f1' }}>🎯</button>
                     <button className="btn-save" onClick={() => { setSelectedJob(job); setShowJDDecoder(true) }} style={{ color: '#D4900D', borderColor: '#D4900D' }}>🔍</button>
+                    <button className="btn-save" onClick={() => { setSelectedJob(job); setShowCompanyDive(true) }} style={{ color: '#2D8A4E', borderColor: '#2D8A4E' }}>🏢</button>
                   </div>
                 </div>
               ))}
@@ -293,6 +253,7 @@ export default function Dashboard({ user }) {
       {showCoverLetter && selectedJob && <CoverLetter job={selectedJob} onClose={() => setShowCoverLetter(false)} />}
       {showSkillGap && selectedJob && <SkillGap job={selectedJob} onClose={() => setShowSkillGap(false)} />}
       {showJDDecoder && selectedJob && <JDDecoder job={selectedJob} onClose={() => setShowJDDecoder(false)} />}
+      {showCompanyDive && selectedJob && <CompanyDive job={selectedJob} onClose={() => setShowCompanyDive(false)} />}
     </div>
   )
 }
