@@ -1,0 +1,481 @@
+{
+    "skill": "Python",
+    "icon": "🐍",
+    "category": "technical",
+    "modules": [
+      {
+        "id": 1,
+        "title": "Python Fundamentals",
+        "is_free": true,
+        "level": "core",
+        "sections": [
+          {
+            "heading": "Variables & Memory Management",
+            "content": "In Python, variables are references to objects in memory, not containers. When you write x = 10, Python creates an integer object 10 in memory and x points to it. This is why Python is called a 'dynamically typed' language — the variable itself has no type, the object it references does.",
+            "code": "x = 10\ny = x        # y points to the SAME object as x\nx = 20       # x now points to a NEW object, y still points to 10\nprint(y)     # Output: 10",
+            "tip": "This is the #1 most asked Python concept in interviews. If interviewer asks 'Is Python pass by value or pass by reference?' — the answer is pass by object reference."
+          },
+          {
+            "heading": "Mutable vs Immutable",
+            "content": "Immutable types (int, float, str, tuple, frozenset) cannot be changed after creation. Mutable types (list, dict, set) can be modified in place. This distinction matters because mutable objects can cause unexpected side effects when shared.",
+            "code": "# Immutable — creates new object\na = 'hello'\nb = a\na = a + ' world'\nprint(b)  # Output: hello — b is NOT affected\n\n# Mutable — modifies SAME object\na = [1, 2, 3]\nb = a\na.append(4)\nprint(b)  # Output: [1, 2, 3, 4] — b IS affected!",
+            "tip": "Always be careful when passing mutable objects to functions — changes inside the function affect the original."
+          },
+          {
+            "heading": "Control Flow — Beyond Basics",
+            "content": "Modern Python offers concise control flow patterns that interviewers expect you to know.",
+            "code": "# Ternary operator\nstatus = 'adult' if age >= 18 else 'minor'\n\n# Walrus operator (:=) — Python 3.8+\nwhile (data := input()) != 'quit':\n    print(data)\n\n# Match-Case — Python 3.10+\ndef http_status(code):\n    match code:\n        case 200: return 'OK'\n        case 404: return 'Not Found'\n        case 500: return 'Server Error'\n        case _: return 'Unknown'",
+            "tip": "Walrus operator and match-case show you know modern Python. Mention these in interviews to stand out."
+          },
+          {
+            "heading": "List Comprehensions",
+            "content": "Interviewers judge your Python level by whether you use comprehensions or write verbose loops. But don't overuse them — if logic has more than 2 conditions, a regular loop is better.",
+            "code": "# Filter even numbers\nevens = [x for x in range(20) if x % 2 == 0]\n\n# Flatten 2D list\nmatrix = [[1,2,3], [4,5,6], [7,8,9]]\nflat = [num for row in matrix for num in row]\n\n# Dictionary comprehension\nword = 'interview'\nchar_count = {ch: word.count(ch) for ch in set(word)}\n\n# Set comprehension\nunique_lengths = {len(w) for w in ['hi', 'hello', 'hey']}",
+            "tip": "When NOT to use comprehensions: complex logic, try/except needed inside, or when readability suffers."
+          },
+          {
+            "heading": "Loops — enumerate, zip, and unpacking",
+            "content": "Professional Python developers never use range(len(list)) to iterate. They use enumerate for index+value and zip for parallel iteration.",
+            "code": "# enumerate — get index AND value\nfruits = ['apple', 'banana', 'cherry']\nfor i, fruit in enumerate(fruits):\n    print(f'{i}: {fruit}')\n\n# zip — iterate multiple lists together\nnames = ['Alice', 'Bob']\nscores = [85, 92]\nfor name, score in zip(names, scores):\n    print(f'{name}: {score}')\n\n# Swap without temp variable\na, b = b, a",
+            "tip": "Using range(len()) instead of enumerate() is a red flag for interviewers — it shows you don't write Pythonic code."
+          },
+          {
+            "heading": "Common Mistakes to Avoid",
+            "content": "Two mistakes that catch even experienced developers.",
+            "code": "# Mistake 1: Mutable default arguments\n# WRONG\ndef add_item(item, items=[]):\n    items.append(item)\n    return items\nprint(add_item('a'))  # ['a']\nprint(add_item('b'))  # ['a', 'b'] — BUG!\n\n# CORRECT\ndef add_item(item, items=None):\n    if items is None:\n        items = []\n    items.append(item)\n    return items\n\n# Mistake 2: Modifying list while iterating\n# WRONG — skips elements\nfor n in nums:\n    if n % 2 == 0:\n        nums.remove(n)\n# CORRECT\nnums = [n for n in nums if n % 2 != 0]",
+            "tip": "Mutable default argument bug is the #1 Python gotcha question in interviews."
+          }
+        ],
+        "key_points": [
+          "Variables are references to objects, not containers",
+          "Mutable objects (list, dict, set) can cause unexpected side effects when shared",
+          "Python is pass-by-object-reference (not value, not reference)",
+          "Use list comprehensions for simple transformations — loops for complex logic",
+          "Never use mutable default arguments in functions"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Data Types & Structures",
+        "is_free": true,
+        "level": "core",
+        "sections": [
+          {
+            "heading": "Strings — More Than You Think",
+            "content": "Strings are immutable sequences. Every string operation creates a NEW string. Always use f-strings (Python 3.6+) — it's the modern standard.",
+            "code": "text = '  Hello, World!  '\ntext.strip()       # 'Hello, World!'\ntext.split(',')    # ['  Hello', ' World!  ']\ntext.lower()       # '  hello, world!  '\n\n# f-strings — always use these\nname = 'Alice'\nage = 25\nprint(f'{name} is {age} years old')\nprint(f'Price: {99.5:.2f}')  # Price: 99.50\n\n# Reverse a string — interview favorite\nreversed_str = 'hello'[::-1]  # 'olleh'",
+            "tip": "Three ways to reverse a string: slicing [::-1], reversed(), or manual loop. Know all three for interviews."
+          },
+          {
+            "heading": "Lists vs Tuples",
+            "content": "Lists are mutable and slower. Tuples are immutable, faster, and use less memory. Use tuples when data shouldn't change.",
+            "code": "# Tuple unpacking\ncoordinates = (10, 20)\nx, y = coordinates\n\n# Named tuples — better than regular tuples\nfrom collections import namedtuple\nEmployee = namedtuple('Employee', ['name', 'age', 'dept'])\nemp = Employee('Alice', 25, 'Engineering')\nprint(emp.name)  # 'Alice' — readable\n\n# Tuples as dict keys (lists cannot be)\nlocation_data = {(28.6, 77.2): 'Delhi', (19.0, 72.8): 'Mumbai'}",
+            "tip": "Tuples can be dictionary keys because they're immutable (hashable). Lists cannot."
+          },
+          {
+            "heading": "Dictionaries — Most Important Structure",
+            "content": "Dictionaries use hash tables internally. Lookup is O(1) average. Always use .get() for safe access.",
+            "code": "person = {'name': 'Alice', 'age': 25}\nemail = person.get('email', 'not provided')  # Safe — no KeyError\n\n# Merging dicts (Python 3.9+)\nmerged = dict1 | dict2\n\n# defaultdict — avoid KeyError\nfrom collections import defaultdict\nword_count = defaultdict(int)\nfor word in 'hello world hello'.split():\n    word_count[word] += 1\n\n# Counter — easiest counting\nfrom collections import Counter\ncounts = Counter('hello world hello'.split())\nprint(counts.most_common(2))  # [('hello', 2), ('world', 1)]",
+            "tip": "dict.get() prevents KeyError. Counter preserves insertion order since Python 3.7+ for tie-breaking in most_common()."
+          },
+          {
+            "heading": "Sets — Unique Elements & Fast Lookup",
+            "content": "Sets provide O(1) membership testing. Use them when checking 'is this element in the collection?' repeatedly.",
+            "code": "a = {1, 2, 3, 4}\nb = {3, 4, 5, 6}\n\na | b    # Union: {1, 2, 3, 4, 5, 6}\na & b    # Intersection: {3, 4}\na - b    # Difference: {1, 2}\na ^ b    # Symmetric diff: {1, 2, 5, 6}\n\n# Find duplicates in a list\nnums = [1, 2, 3, 2, 4, 3, 5]\nseen = set()\nduplicates = set()\nfor n in nums:\n    if n in seen:\n        duplicates.add(n)\n    seen.add(n)\n# duplicates = {2, 3}",
+            "tip": "Creating empty set: use set() not {}. {} creates empty dict."
+          },
+          {
+            "heading": "When to Use What",
+            "content": "Choosing the right data structure shows interviewer you think about performance.",
+            "code": "# Decision Guide:\n# Ordered, changeable     → list\n# Ordered, unchangeable   → tuple (faster + safer)\n# Key-value pairs         → dict (O(1) lookup)\n# Unique values           → set (auto-dedup)\n# FIFO queue              → collections.deque (O(1) both ends)\n# Counting things         → collections.Counter\n# Sorted data always      → sortedcontainers.SortedList (pip install)",
+            "tip": "sortedcontainers is a third-party library (pip install sortedcontainers). Everything else (deque, Counter) is built-in Python standard library."
+          }
+        ],
+        "key_points": [
+          "Strings are immutable — every operation creates a new string",
+          "Use f-strings (not .format() or %) — modern standard",
+          "Tuples are faster and safer than lists when data shouldn't change",
+          "dict.get() prevents KeyError — always use for uncertain keys",
+          "Sets give O(1) lookup — convert list to set when checking membership"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Functions & OOP",
+        "is_free": false,
+        "level": "core",
+        "sections": [
+          {
+            "heading": "Functions as First-Class Citizens",
+            "content": "In Python, functions are objects. You can pass them as arguments, return them, and assign them to variables.",
+            "code": "# Functions as arguments\ndef apply(func, value):\n    return func(value)\nresult = apply(str.upper, 'hello')  # 'HELLO'\n\n# Lambda — anonymous functions\nsquare = lambda x: x ** 2\nsorted_people = sorted(people, key=lambda p: p['age'])\n\n# Map, Filter\nnumbers = [1, 2, 3, 4, 5]\nsquared = list(map(lambda x: x**2, numbers))\nevens = list(filter(lambda x: x%2 == 0, numbers))",
+            "tip": "Use lambda for short one-line functions only. For anything complex, define a proper function."
+          },
+          {
+            "heading": "*args and **kwargs",
+            "content": "*args collects extra positional arguments into a tuple. **kwargs collects keyword arguments into a dict. Order in function: required, *args, keyword-only, **kwargs.",
+            "code": "def flexible(required, *args, **kwargs):\n    print(f'Required: {required}')\n    print(f'Extra args: {args}')     # tuple\n    print(f'Extra kwargs: {kwargs}')  # dict\n\nflexible('hello', 1, 2, 3, name='Alice', age=25)",
+            "tip": "Interview trick: 'What's the difference between *args and **kwargs?' — args is tuple (positional), kwargs is dict (keyword)."
+          },
+          {
+            "heading": "Decorators",
+            "content": "Decorators modify function behavior without changing function code. Real-world uses: logging, caching, authentication, timing.",
+            "code": "def timer(func):\n    import time\n    def wrapper(*args, **kwargs):\n        start = time.time()\n        result = func(*args, **kwargs)\n        print(f'{func.__name__} took {time.time()-start:.4f}s')\n        return result\n    return wrapper\n\n@timer\ndef slow_function():\n    import time\n    time.sleep(1)\n    return 'done'\n\nslow_function()  # slow_function took 1.0012s",
+            "tip": "Python's built-in @property, @classmethod, @staticmethod are all decorators. Know how to write custom ones."
+          },
+          {
+            "heading": "OOP — Classes & Objects",
+            "content": "Python classes support class variables (shared), instance variables (unique), properties (pythonic getters/setters), and three types of methods.",
+            "code": "class Employee:\n    company = 'TCS'         # Class variable — shared\n    count = 0\n\n    def __init__(self, name, salary):\n        self.name = name     # Instance variable — unique\n        self.salary = salary\n        Employee.count += 1\n\n    @property\n    def annual(self):\n        return self.salary * 12\n\n    @classmethod\n    def get_count(cls):\n        return cls.count\n\n    @staticmethod\n    def is_valid_salary(salary):\n        return salary > 0\n\n    def __repr__(self):\n        return f'Employee({self.name}, {self.salary})'",
+            "tip": "@property replaces getters/setters. @classmethod accesses class (cls). @staticmethod is just a utility — no access to class or instance."
+          },
+          {
+            "heading": "Inheritance & Magic Methods",
+            "content": "Magic methods (dunder methods) let you define how objects behave with operators and built-in functions.",
+            "code": "class Money:\n    def __init__(self, amount, currency='INR'):\n        self.amount = amount\n        self.currency = currency\n\n    def __add__(self, other):\n        if self.currency != other.currency:\n            raise ValueError('Cannot add different currencies')\n        return Money(self.amount + other.amount)\n\n    def __gt__(self, other):\n        return self.amount > other.amount\n\n    def __int__(self):\n        return int(self.amount)\n\n    def __float__(self):\n        return float(self.amount)\n\nsalary = Money(50000) + Money(10000)  # Money(60000)\nprint(int(Money(50000)))  # 50000",
+            "tip": "__len__ should ONLY be used for containers to represent 'number of items'. For numeric types use __int__ or __float__."
+          }
+        ],
+        "key_points": [
+          "Functions are first-class objects — pass them around freely",
+          "*args = tuple of extra positional args, **kwargs = dict of extra keyword args",
+          "Decorators wrap functions to add behavior",
+          "Use @property instead of getters/setters — it's Pythonic",
+          "__repr__ is for developers, __str__ is for users"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "File Handling & Error Management",
+        "is_free": false,
+        "level": "core",
+        "sections": [
+          {
+            "heading": "File Operations",
+            "content": "Always use 'with' statement for files — it auto-closes even if errors occur. Never use manual open/close.",
+            "code": "# Reading\nwith open('data.txt', 'r') as file:\n    for line in file:         # Line by line — memory efficient\n        print(line.strip())\n\n# Writing\nwith open('output.txt', 'w') as f:  # 'w' overwrites, 'a' appends\n    f.write('Hello World\\n')\n\n# CSV\nimport csv\nwith open('data.csv', 'r') as f:\n    for row in csv.DictReader(f):\n        print(row['name'])\n\n# JSON\nimport json\nwith open('config.json', 'r') as f:\n    data = json.load(f)\nwith open('output.json', 'w') as f:\n    json.dump(data, f, indent=2)",
+            "tip": "csv and json are built-in Python modules — no pip install needed."
+          },
+          {
+            "heading": "Exception Handling",
+            "content": "Catch specific exceptions, not bare except. Use else for success code and finally for cleanup.",
+            "code": "try:\n    result = 10 / 0\nexcept ZeroDivisionError:\n    print('Cannot divide by zero')\nexcept (TypeError, ValueError) as e:\n    print(f'Error: {e}')\nelse:\n    print('No errors')      # Runs ONLY if no exception\nfinally:\n    print('Always runs')    # Cleanup code\n\n# Custom Exceptions\nclass InsufficientBalance(Exception):\n    def __init__(self, balance, amount):\n        super().__init__(f'Cannot withdraw {amount}. Balance: {balance}')",
+            "tip": "Never use bare 'except:' — it catches even keyboard interrupts and system exits."
+          },
+          {
+            "heading": "Context Managers & Logging",
+            "content": "Context managers handle setup and cleanup automatically. Logging is better than print() for production code.",
+            "code": "# Custom context manager\nfrom contextlib import contextmanager\n\n@contextmanager\ndef db_connection(name):\n    print(f'Connecting to {name}')\n    conn = {'connected': True}\n    try:\n        yield conn\n    finally:\n        print(f'Closing {name}')\n        conn['connected'] = False\n\nwith db_connection('mydb') as conn:\n    print('Using database')\n\n# Logging\nimport logging\nlogging.basicConfig(level=logging.INFO)\nlogger = logging.getLogger(__name__)\nlogger.info('Processing started')\nlogger.error('Something failed', exc_info=True)",
+            "tip": "Use logging instead of print() in any serious project. It's built-in and configurable."
+          }
+        ],
+        "key_points": [
+          "Always use 'with' statement for files — never manual open/close",
+          "Catch specific exceptions, not bare except:",
+          "Use custom exceptions for domain-specific errors",
+          "else in try block runs only when no exception occurs",
+          "Logging > print() — always use logging in production"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Libraries & Real Projects",
+        "is_free": false,
+        "level": "core",
+        "sections": [
+          {
+            "heading": "Important Note",
+            "content": "numpy, pandas, and requests are external libraries — install with: pip install numpy pandas requests. In contrast, os, re, csv, json, logging are built-in Python — no installation needed.",
+            "code": "# Install external libraries\n# pip install numpy pandas requests\n\n# These are built-in — no install needed:\nimport os, re, csv, json, logging",
+            "tip": "In interviews, mention whether a library is built-in or third-party. It shows you understand the Python ecosystem."
+          },
+          {
+            "heading": "NumPy — Fast Numerical Computing",
+            "content": "NumPy operations are 10-100x faster than Python loops because they run in C internally.",
+            "code": "import numpy as np\n\narr = np.array([1, 2, 3, 4, 5])\ndoubled = arr * 2           # [2, 4, 6, 8, 10] — no loop!\nprint(arr.mean())           # 3.0\nprint(arr.std())            # Standard deviation\n\n# Reshaping\nmatrix = np.arange(12).reshape(3, 4)\n\n# Boolean indexing\nscores = np.array([85, 92, 78, 95, 60])\npassed = scores[scores >= 80]  # [85, 92, 95]",
+            "tip": "NumPy is the foundation of all data science in Python. Pandas, scikit-learn, TensorFlow all use NumPy arrays internally."
+          },
+          {
+            "heading": "Pandas — Data Analysis",
+            "content": "Pandas is the most used library for data manipulation. groupby, merge, and pivot_table are interview favorites.",
+            "code": "import pandas as pd\n\ndf = pd.read_csv('employees.csv')\ndf.head()              # First 5 rows\ndf.info()              # Column types, nulls\ndf.describe()          # Statistical summary\n\n# Filter\nhigh_salary = df[df['salary'] > 700000]\n\n# Groupby\navg_by_city = df.groupby('city')['salary'].mean()\n\n# Handle missing data\ndf.fillna(0)           # Fill NaN with 0\ndf.dropna()            # Remove rows with NaN",
+            "tip": "Pandas interview questions focus on groupby, merge, handling missing data, and apply/lambda combinations."
+          },
+          {
+            "heading": "Requests — API Calls",
+            "content": "The requests library makes HTTP calls simple. Always handle timeouts and errors.",
+            "code": "import requests\n\n# GET request\nres = requests.get('https://api.github.com/users/python')\nif res.status_code == 200:\n    data = res.json()\n\n# POST request\npayload = {'name': 'Alice', 'job': 'Developer'}\nres = requests.post('https://api.example.com', json=payload)\n\n# Error handling\ntry:\n    res = requests.get(url, timeout=10)\n    res.raise_for_status()\nexcept requests.exceptions.Timeout:\n    print('Timed out')\nexcept requests.exceptions.HTTPError as e:\n    print(f'HTTP error: {e}')",
+            "tip": "Always set timeout in requests.get() — without it, your program can hang forever."
+          },
+          {
+            "heading": "Automation Scripts",
+            "content": "Python excels at automation — file renaming, data processing, email validation.",
+            "code": "# Bulk file renamer\nimport os\ndef rename_files(directory, prefix):\n    for i, f in enumerate(os.listdir(directory)):\n        ext = os.path.splitext(f)[1]\n        new_name = f'{prefix}_{i+1}{ext}'\n        os.rename(os.path.join(directory, f),\n                  os.path.join(directory, new_name))\n\n# Email validator\nimport re\ndef validate_email(email):\n    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'\n    return bool(re.match(pattern, email))",
+            "tip": "Automation scripts are great portfolio projects. Show 2-3 in interviews to prove practical Python skills."
+          }
+        ],
+        "key_points": [
+          "NumPy for numerical work — 10-100x faster than Python lists",
+          "Pandas for data analysis — groupby and merge are interview favorites",
+          "requests for API calls — always handle timeouts",
+          "os and pathlib for file system operations",
+          "re (regex) for pattern matching and validation"
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Interview Questions & Answers",
+        "is_free": false,
+        "level": "core",
+        "sections": [
+          {
+            "heading": "Q1: is vs == difference",
+            "content": "== checks value equality. 'is' checks identity (same object in memory). Use 'is' only for None checks.",
+            "code": "a = [1, 2, 3]\nb = [1, 2, 3]\nprint(a == b)   # True — same values\nprint(a is b)   # False — different objects\n\nc = a\nprint(a is c)   # True — same object\n\n# Correct None check\nif x is None:   # Good\nif x == None:   # Bad",
+            "tip": "Small integers (-5 to 256) are cached: a=5; b=5; a is b is True. Don't rely on this — it's CPython implementation detail."
+          },
+          {
+            "heading": "Q2: GIL (Global Interpreter Lock)",
+            "content": "GIL allows only ONE thread to execute Python bytecode at a time. Multi-threaded programs don't achieve true parallelism for CPU-bound tasks.",
+            "code": "# CPU-bound → use multiprocessing\nfrom multiprocessing import Pool\nwith Pool(4) as p:\n    results = p.map(heavy_function, data)\n\n# I/O-bound → threading works fine\nimport threading\nt = threading.Thread(target=download, args=(url,))\nt.start()\n\n# Modern async I/O\nimport asyncio\nasync def fetch(url):\n    pass  # non-blocking I/O",
+            "tip": "GIL is released during I/O operations — that's why threading works for network/file operations."
+          },
+          {
+            "heading": "Q3: Generators and yield",
+            "content": "Generators produce values one at a time using yield, saving memory. They're lazy — they compute values only when asked.",
+            "code": "# Regular function — stores ALL in memory\ndef squares_list(n):\n    return [x**2 for x in range(n)]\n\n# Generator — one at a time, saves memory\ndef squares_gen(n):\n    for x in range(n):\n        yield x**2\n\n# Generator expression\nsquares = (x**2 for x in range(1000000))  # No memory used yet\n\nfor s in squares_gen(1000000):\n    if s > 100:\n        break  # Stops generating — efficient!",
+            "tip": "Use generators when processing large datasets that don't fit in memory."
+          },
+          {
+            "heading": "Q4: Shallow vs Deep Copy",
+            "content": "Shallow copy copies outer structure but shares nested objects. Deep copy copies everything recursively.",
+            "code": "import copy\n\noriginal = [[1, 2], [3, 4]]\n\n# Shallow — inner lists shared\nshallow = copy.copy(original)\nshallow[0][0] = 99\nprint(original[0][0])  # 99 — affected!\n\n# Deep — fully independent\noriginal = [[1, 2], [3, 4]]\ndeep = copy.deepcopy(original)\ndeep[0][0] = 99\nprint(original[0][0])  # 1 — NOT affected\n\n# Three ways to shallow copy a list:\n# 1. old[:]  2. old.copy()  3. list(old)",
+            "tip": "list(old) is also a valid shallow copy method — frequently seen in code reviews."
+          },
+          {
+            "heading": "Q5: Memory Management",
+            "content": "Python uses reference counting + cyclic garbage collector. When reference count reaches 0, memory is freed. GC handles circular references.",
+            "code": "import sys\n\na = [1, 2, 3]\nprint(sys.getrefcount(a))  # Shows reference count\n\n# Small integer caching\na = 5\nb = 5\nprint(a is b)  # True — cached (-5 to 256)\n\na = 500\nb = 500\nprint(a is b)  # False — not cached",
+            "tip": "Python caches small integers (-5 to 256) and short strings. This is CPython optimization, not guaranteed in other implementations."
+          }
+        ],
+        "key_points": [
+          "'is' checks identity, '==' checks equality — use 'is' only for None",
+          "GIL prevents true multithreading — use multiprocessing for CPU tasks",
+          "Generators save memory — use for large datasets",
+          "Shallow copy shares nested objects, deep copy is fully independent",
+          "__slots__ saves memory when creating many instances"
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Big-O, Collections & itertools",
+        "is_free": false,
+        "level": "advanced",
+        "sections": [
+          {
+            "heading": "Big-O Time Complexity — The Cheat Sheet",
+            "content": "Understanding Big-O is what separates a coder from an engineer. Every data structure choice has performance implications. Interviewers at Google, Amazon, and Microsoft expect you to justify your choice of data structure using Big-O.",
+            "code": "# LIST operations:\n# append()      → O(1)\n# insert(0, x)  → O(N) — shifts all elements!\n# pop()         → O(1) — from end\n# pop(0)        → O(N) — shifts all elements!\n# x in list     → O(N) — scans entire list\n# list[i]       → O(1) — direct index access\n# sort()        → O(N log N)\n\n# DICT operations:\n# dict[key]     → O(1) average\n# key in dict   → O(1) average\n# dict.get()    → O(1) average\n# del dict[key] → O(1) average\n\n# SET operations:\n# x in set      → O(1) average\n# set.add()     → O(1) average\n# set.remove()  → O(1) average\n\n# DEQUE operations (from collections):\n# appendleft()  → O(1) — list insert(0) is O(N)!\n# popleft()     → O(1) — list pop(0) is O(N)!",
+            "tip": "When interviewer asks 'check if element exists' — NEVER use list. Convert to set first. list is O(N), set is O(1). This single optimization can make your code 1000x faster."
+          },
+          {
+            "heading": "When Big-O Matters — Real Example",
+            "content": "Choosing wrong data structure can make code 1000x slower. Here's a real interview scenario.",
+            "code": "# WRONG — O(N) lookup for each check = O(N*M) total\ndef find_common_wrong(list1, list2):\n    common = []\n    for item in list1:           # O(N)\n        if item in list2:        # O(M) — scanning list!\n            common.append(item)\n    return common  # Total: O(N * M)\n\n# RIGHT — O(1) lookup with set = O(N+M) total\ndef find_common_right(list1, list2):\n    set2 = set(list2)            # O(M) — one-time conversion\n    return [item for item in list1 if item in set2]  # O(N)\n    # Total: O(N + M)\n\n# With 10,000 items each:\n# Wrong: 100,000,000 operations\n# Right: 20,000 operations — 5000x faster!",
+            "tip": "In interviews, always say: 'I'll convert this to a set for O(1) lookup' before writing the code. It shows you think about performance."
+          },
+          {
+            "heading": "itertools — Solve Complex Problems in 2 Lines",
+            "content": "itertools provides C-optimized tools for iteration. Using these in interviews instantly signals expert-level Python knowledge.",
+            "code": "from itertools import groupby, chain, permutations, combinations, product, islice\n\n# chain — flatten multiple iterables\ncombined = list(chain([1,2], [3,4], [5,6]))  # [1,2,3,4,5,6]\n\n# groupby — group consecutive elements\ndata = [('A', 1), ('A', 2), ('B', 3), ('B', 4), ('A', 5)]\nsorted_data = sorted(data, key=lambda x: x[0])  # MUST sort first!\nfor key, group in groupby(sorted_data, key=lambda x: x[0]):\n    print(key, list(group))\n# A [('A', 1), ('A', 2), ('A', 5)]\n# B [('B', 3), ('B', 4)]\n\n# permutations — all possible arrangements\nlist(permutations('ABC', 2))  # [('A','B'), ('A','C'), ('B','A')...]\n\n# combinations — unique selections (order doesn't matter)\nlist(combinations('ABC', 2))  # [('A','B'), ('A','C'), ('B','C')]\n\n# product — cartesian product (nested loop replacement)\nlist(product('AB', '12'))  # [('A','1'), ('A','2'), ('B','1'), ('B','2')]\n\n# islice — slice a generator without converting to list\nfrom itertools import islice\nfirst_5 = list(islice(range(1000000), 5))  # [0,1,2,3,4] — no memory waste",
+            "tip": "groupby REQUIRES sorted input. This is the #1 mistake developers make with groupby — it only groups CONSECUTIVE equal elements."
+          },
+          {
+            "heading": "collections — Beyond dict and list",
+            "content": "The collections module has specialized containers that solve common patterns better than basic data types.",
+            "code": "from collections import deque, defaultdict, Counter, OrderedDict, ChainMap\n\n# deque — O(1) operations on both ends\nqueue = deque([1, 2, 3])\nqueue.appendleft(0)    # O(1) — list.insert(0,x) is O(N)!\nqueue.popleft()        # O(1) — list.pop(0) is O(N)!\nqueue.rotate(1)        # [3, 0, 1, 2] — rotate elements\n\n# defaultdict — auto-initialize missing keys\ngrouped = defaultdict(list)\nfor name, dept in [('Alice','Eng'), ('Bob','Sales'), ('Charlie','Eng')]:\n    grouped[dept].append(name)\n# {'Eng': ['Alice', 'Charlie'], 'Sales': ['Bob']}\n\n# Counter — count anything\nwords = 'the cat sat on the mat the cat'.split()\nc = Counter(words)\nprint(c.most_common(2))  # [('the', 3), ('cat', 2)]\nprint(c['the'])          # 3\n\n# Counter arithmetic\nc1 = Counter(a=3, b=1)\nc2 = Counter(a=1, b=2)\nprint(c1 + c2)  # Counter({'a': 4, 'b': 3})\nprint(c1 - c2)  # Counter({'a': 2}) — drops zero/negative\n\n# ChainMap — search multiple dicts as one\ndefaults = {'color': 'red', 'size': 'M'}\nuser_prefs = {'color': 'blue'}\nconfig = ChainMap(user_prefs, defaults)\nprint(config['color'])  # 'blue' — user_prefs checked first\nprint(config['size'])   # 'M' — falls back to defaults",
+            "tip": "deque is pronounced 'deck'. Using list as a queue is a common anti-pattern — deque is the correct choice for FIFO operations."
+          }
+        ],
+        "key_points": [
+          "list lookup is O(N), set/dict lookup is O(1) — always convert for membership checks",
+          "deque for O(1) operations on both ends — never use list as a queue",
+          "itertools.groupby requires sorted input — most common mistake",
+          "Counter supports arithmetic — add, subtract, intersect counters",
+          "defaultdict eliminates KeyError checks — cleaner code"
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Concurrency & Async Programming",
+        "is_free": false,
+        "level": "advanced",
+        "sections": [
+          {
+            "heading": "The Concurrency Trifecta — When to Use What",
+            "content": "This is the #1 architectural question in senior Python interviews: 'I have a slow script. How do I make it faster?' The answer depends on whether your task is CPU-bound or I/O-bound.",
+            "code": "# CPU-BOUND (heavy computation)\n# → Use MULTIPROCESSING (separate processes, bypass GIL)\n# Examples: image processing, ML training, data crunching\n\n# I/O-BOUND (waiting for external resources)\n# → Use THREADING or ASYNCIO\n# Examples: API calls, file downloads, database queries\n\n# Decision Tree:\n# Is it CPU-heavy?  → multiprocessing\n# Is it I/O-heavy with few connections?  → threading\n# Is it I/O-heavy with 1000+ connections? → asyncio",
+            "tip": "The interviewer wants to hear you say: 'It depends on whether the task is CPU-bound or I/O-bound.' This single sentence shows architectural thinking."
+          },
+          {
+            "heading": "Threading — For I/O-Bound Tasks",
+            "content": "Threading runs multiple tasks concurrently (not parallel) within a single process. GIL is released during I/O, so threads work great for network calls, file operations, and database queries.",
+            "code": "import threading\nimport time\n\n# Without threading — sequential (slow)\ndef download(url):\n    print(f'Downloading {url}')\n    time.sleep(2)  # Simulate network delay\n    print(f'Done {url}')\n\n# Sequential: 3 downloads × 2 seconds = 6 seconds\nfor url in ['url1', 'url2', 'url3']:\n    download(url)\n\n# With threading — concurrent (fast)\nthreads = []\nfor url in ['url1', 'url2', 'url3']:\n    t = threading.Thread(target=download, args=(url,))\n    threads.append(t)\n    t.start()\n\nfor t in threads:\n    t.join()  # Wait for all to finish\n# Total time: ~2 seconds instead of 6!\n\n# Using ThreadPoolExecutor (cleaner)\nfrom concurrent.futures import ThreadPoolExecutor\n\nwith ThreadPoolExecutor(max_workers=5) as executor:\n    urls = ['url1', 'url2', 'url3', 'url4', 'url5']\n    results = executor.map(download, urls)",
+            "tip": "ThreadPoolExecutor is the modern way to use threads. Never manage raw threads in production — use the executor pattern."
+          },
+          {
+            "heading": "Multiprocessing — For CPU-Bound Tasks",
+            "content": "Multiprocessing creates separate Python processes, each with its own GIL. This is the ONLY way to achieve true parallelism in Python for CPU-intensive tasks.",
+            "code": "from multiprocessing import Pool, cpu_count\nimport time\n\ndef heavy_computation(n):\n    \"\"\"Simulate CPU-heavy work\"\"\"\n    total = sum(i * i for i in range(n))\n    return total\n\n# Sequential — uses 1 CPU core\nstart = time.time()\nresults = [heavy_computation(10_000_000) for _ in range(4)]\nprint(f'Sequential: {time.time()-start:.2f}s')\n\n# Parallel — uses ALL CPU cores\nstart = time.time()\nwith Pool(cpu_count()) as pool:\n    results = pool.map(heavy_computation, [10_000_000] * 4)\nprint(f'Parallel: {time.time()-start:.2f}s')\n\n# On 4-core machine:\n# Sequential: ~8 seconds\n# Parallel: ~2 seconds (4x faster!)\n\nprint(f'Your CPU has {cpu_count()} cores')",
+            "tip": "Multiprocessing has overhead for creating processes. Don't use it for small tasks — the process creation time may exceed the computation time."
+          },
+          {
+            "heading": "Asyncio — For High-Concurrency I/O",
+            "content": "Asyncio handles thousands of concurrent I/O operations in a single thread. It's event-driven — while one task waits for I/O, others run. Perfect for web servers, API scrapers, and chat applications.",
+            "code": "import asyncio\n\n# Basic async function\nasync def fetch_data(url, delay):\n    print(f'Fetching {url}...')\n    await asyncio.sleep(delay)  # Non-blocking wait\n    print(f'Done {url}')\n    return f'Data from {url}'\n\n# Run multiple async tasks concurrently\nasync def main():\n    # gather runs all tasks concurrently\n    results = await asyncio.gather(\n        fetch_data('api/users', 2),\n        fetch_data('api/orders', 3),\n        fetch_data('api/products', 1)\n    )\n    print(results)\n\nasyncio.run(main())\n# Total time: ~3 seconds (longest task)\n# Sequential would be: 6 seconds\n\n# Real-world: async HTTP with aiohttp\n# pip install aiohttp\nimport aiohttp\n\nasync def fetch_url(session, url):\n    async with session.get(url) as response:\n        return await response.json()\n\nasync def scrape_all():\n    async with aiohttp.ClientSession() as session:\n        urls = [f'https://api.example.com/page/{i}' for i in range(100)]\n        tasks = [fetch_url(session, url) for url in urls]\n        results = await asyncio.gather(*tasks)\n    return results",
+            "tip": "Use asyncio when you have 100+ concurrent I/O operations. For 5-10 operations, threading is simpler and equally effective."
+          },
+          {
+            "heading": "Interview Red Flags — Python Anti-Patterns",
+            "content": "Senior interviewers watch for these common mistakes that show lack of experience.",
+            "code": "# RED FLAG 1: Using list as queue\n# WRONG\nqueue = []\nqueue.append('task1')    # OK\nqueue.pop(0)             # O(N) — shifts all elements!\n# CORRECT: Use deque\nfrom collections import deque\nqueue = deque()\nqueue.append('task1')\nqueue.popleft()          # O(1)\n\n# RED FLAG 2: String concatenation in loop\n# WRONG — creates new string each iteration O(N²)\nresult = ''\nfor word in words:\n    result += word + ' '\n# CORRECT — join is O(N)\nresult = ' '.join(words)\n\n# RED FLAG 3: Not using context managers\n# WRONG\nf = open('file.txt')\ndata = f.read()\nf.close()  # What if error occurs before close?\n# CORRECT\nwith open('file.txt') as f:\n    data = f.read()  # Auto-closes even on error\n\n# RED FLAG 4: Checking type with ==\n# WRONG\nif type(x) == int:\n# CORRECT — handles inheritance\nif isinstance(x, int):\n\n# RED FLAG 5: Using global variables\n# WRONG\ncounter = 0\ndef increment():\n    global counter  # Avoid this!\n    counter += 1\n# CORRECT — use class or pass as argument",
+            "tip": "If an interviewer sees you use list.pop(0) instead of deque.popleft(), or string += in a loop instead of join(), they'll immediately mark you as junior level."
+          }
+        ],
+        "key_points": [
+          "CPU-bound → multiprocessing, I/O-bound → threading or asyncio",
+          "ThreadPoolExecutor is the modern way to use threads in production",
+          "Multiprocessing bypasses GIL by creating separate processes",
+          "asyncio is best for 100+ concurrent I/O operations",
+          "String concatenation in loops is O(N²) — always use join()"
+        ]
+      },
+      {
+        "id": 9,
+        "title": "Testing, Design Patterns & SOLID",
+        "is_free": false,
+        "level": "advanced",
+        "sections": [
+          {
+            "heading": "pytest — Professional Testing",
+            "content": "No code goes to production without tests. pytest is the industry standard for Python testing. Companies like Google and Amazon test everything.",
+            "code": "# Install: pip install pytest\n# File: test_calculator.py\n\ndef add(a, b):\n    return a + b\n\ndef divide(a, b):\n    if b == 0:\n        raise ValueError('Cannot divide by zero')\n    return a / b\n\n# Basic tests\ndef test_add():\n    assert add(2, 3) == 5\n    assert add(-1, 1) == 0\n    assert add(0, 0) == 0\n\ndef test_divide():\n    assert divide(10, 2) == 5.0\n    assert divide(7, 2) == 3.5\n\n# Testing exceptions\nimport pytest\ndef test_divide_by_zero():\n    with pytest.raises(ValueError):\n        divide(10, 0)\n\n# Parametrized tests — test multiple inputs\n@pytest.mark.parametrize('a,b,expected', [\n    (2, 3, 5),\n    (-1, 1, 0),\n    (100, 200, 300),\n])\ndef test_add_parametrized(a, b, expected):\n    assert add(a, b) == expected\n\n# Run: pytest test_calculator.py -v",
+            "tip": "pytest.raises() is how you test that errors are raised correctly. Every production function that can fail should have a test for its error case."
+          },
+          {
+            "heading": "Mocking — Test Without Real APIs",
+            "content": "Mocking replaces real objects with fake ones during testing. Use it when your code calls external APIs, databases, or services you don't want to hit during tests.",
+            "code": "from unittest.mock import patch, MagicMock\nimport requests\n\n# Function that calls external API\ndef get_user(user_id):\n    response = requests.get(f'https://api.example.com/users/{user_id}')\n    if response.status_code == 200:\n        return response.json()\n    return None\n\n# Test WITHOUT hitting real API\n@patch('requests.get')\ndef test_get_user(mock_get):\n    # Setup fake response\n    mock_response = MagicMock()\n    mock_response.status_code = 200\n    mock_response.json.return_value = {'name': 'Alice', 'age': 25}\n    mock_get.return_value = mock_response\n\n    # Test\n    result = get_user(1)\n    assert result['name'] == 'Alice'\n    mock_get.assert_called_once_with('https://api.example.com/users/1')\n\n@patch('requests.get')\ndef test_get_user_not_found(mock_get):\n    mock_response = MagicMock()\n    mock_response.status_code = 404\n    mock_get.return_value = mock_response\n\n    result = get_user(999)\n    assert result is None",
+            "tip": "@patch replaces the IMPORT path, not the function location. Common mistake: patching 'requests.get' when you should patch 'mymodule.requests.get'."
+          },
+          {
+            "heading": "Design Patterns — Singleton & Factory",
+            "content": "Design patterns are reusable solutions to common software problems. Interviewers test these to see if you can architect large systems.",
+            "code": "# SINGLETON — only one instance ever exists\n# Use for: database connections, config managers, loggers\nclass DatabaseConnection:\n    _instance = None\n\n    def __new__(cls):\n        if cls._instance is None:\n            cls._instance = super().__new__(cls)\n            cls._instance.connection = 'Connected to DB'\n        return cls._instance\n\ndb1 = DatabaseConnection()\ndb2 = DatabaseConnection()\nprint(db1 is db2)  # True — same instance!\n\n# FACTORY — create objects without specifying exact class\n# Use for: creating different types based on input\nclass PaymentFactory:\n    @staticmethod\n    def create(method):\n        if method == 'upi':\n            return UPIPayment()\n        elif method == 'card':\n            return CardPayment()\n        elif method == 'wallet':\n            return WalletPayment()\n        raise ValueError(f'Unknown payment: {method}')\n\n# Usage — caller doesn't need to know specific classes\npayment = PaymentFactory.create('upi')\npayment.process(amount=500)\n\n# OBSERVER — notify multiple objects of changes\n# Use for: event systems, notifications, pub/sub\nclass EventManager:\n    def __init__(self):\n        self.listeners = {}\n\n    def subscribe(self, event, callback):\n        self.listeners.setdefault(event, []).append(callback)\n\n    def emit(self, event, data):\n        for callback in self.listeners.get(event, []):\n            callback(data)\n\nevents = EventManager()\nevents.subscribe('order', lambda d: print(f'Email: {d}'))\nevents.subscribe('order', lambda d: print(f'SMS: {d}'))\nevents.emit('order', 'Order #123 confirmed')",
+            "tip": "Don't overuse patterns. Use Singleton for shared resources (DB, config). Use Factory when you have multiple classes implementing the same interface."
+          },
+          {
+            "heading": "SOLID Principles in Python",
+            "content": "SOLID principles make code maintainable when 50+ developers work on the same codebase. These are essential for senior/lead engineer interviews.",
+            "code": "# S — Single Responsibility\n# WRONG: one class does everything\nclass User:\n    def authenticate(self): pass\n    def save_to_db(self): pass\n    def send_email(self): pass\n\n# RIGHT: each class has ONE job\nclass UserAuth:\n    def authenticate(self): pass\nclass UserRepository:\n    def save(self, user): pass\nclass EmailService:\n    def send(self, to, message): pass\n\n# O — Open/Closed (open for extension, closed for modification)\n# Use typing.Protocol for duck typing + type safety\nfrom typing import Protocol\n\nclass PaymentMethod(Protocol):\n    def process(self, amount: float) -> bool: ...\n\nclass UPIPayment:\n    def process(self, amount: float) -> bool:\n        print(f'UPI: {amount}')\n        return True\n\nclass CardPayment:\n    def process(self, amount: float) -> bool:\n        print(f'Card: {amount}')\n        return True\n\n# Adding new payment = new class, NO modification to existing code\nclass CryptoPayment:\n    def process(self, amount: float) -> bool:\n        print(f'Crypto: {amount}')\n        return True\n\n# D — Dependency Injection\n# WRONG: hard-coded dependency\nclass OrderService:\n    def __init__(self):\n        self.payment = UPIPayment()  # Tightly coupled!\n\n# RIGHT: inject dependency\nclass OrderService:\n    def __init__(self, payment: PaymentMethod):\n        self.payment = payment  # Loosely coupled!\n\n# Can use any payment method:\norder1 = OrderService(UPIPayment())\norder2 = OrderService(CardPayment())\norder3 = OrderService(CryptoPayment())",
+            "tip": "typing.Protocol is Python's answer to interfaces. It enables duck typing WITH type safety — the best of both worlds."
+          }
+        ],
+        "key_points": [
+          "pytest is the industry standard — use assert, parametrize, and fixtures",
+          "@patch mocks external dependencies — never hit real APIs in tests",
+          "Singleton ensures one instance — use for DB connections and configs",
+          "Factory pattern creates objects without specifying exact class",
+          "SOLID makes code maintainable — Dependency Injection is the most important principle"
+        ]
+      },
+      {
+        "id": 10,
+        "title": "Docker, CI/CD & Production Python",
+        "is_free": false,
+        "level": "advanced",
+        "sections": [
+          {
+            "heading": "Virtual Environments — Why They Matter",
+            "content": "Every Python project should have its own virtual environment. Without it, package conflicts between projects will break things. This is the FIRST thing any interviewer checks in your project.",
+            "code": "# Create virtual environment\npython -m venv myproject_env\n\n# Activate it\n# Windows:\nmyproject_env\\Scripts\\activate\n# Mac/Linux:\nsource myproject_env/bin/activate\n\n# Install packages (isolated to this env)\npip install flask requests pandas\n\n# Save dependencies\npip freeze > requirements.txt\n\n# Anyone can recreate your environment:\npip install -r requirements.txt\n\n# Deactivate\ndeactivate\n\n# requirements.txt example:\n# flask==3.0.0\n# requests==2.31.0\n# pandas==2.1.0",
+            "tip": "Never install packages globally with pip install on your system Python. Always use a virtual environment. This is non-negotiable in professional development."
+          },
+          {
+            "heading": "Type Hints — Write Self-Documenting Code",
+            "content": "Type hints make your code readable, enable IDE autocomplete, and catch bugs before runtime. Modern Python (3.9+) supports native type hints without importing typing for basic types.",
+            "code": "# Basic type hints\ndef greet(name: str) -> str:\n    return f'Hello, {name}'\n\ndef calculate_average(numbers: list[float]) -> float:\n    return sum(numbers) / len(numbers)\n\n# Optional values\nfrom typing import Optional\ndef find_user(user_id: int) -> Optional[dict]:\n    # Returns dict or None\n    pass\n\n# Complex types\nfrom typing import Union\ndef process(data: Union[str, list[str]]) -> list[str]:\n    if isinstance(data, str):\n        return [data]\n    return data\n\n# TypedDict — typed dictionaries\nfrom typing import TypedDict\nclass UserDict(TypedDict):\n    name: str\n    age: int\n    email: str\n\ndef create_user(data: UserDict) -> None:\n    print(data['name'])  # IDE knows this is str\n\n# Run type checker: pip install mypy\n# mypy your_script.py",
+            "tip": "Type hints are NOT enforced at runtime — they're for documentation and static analysis. Use mypy to catch type errors before running code."
+          },
+          {
+            "heading": "Docker — Package Your App for Deployment",
+            "content": "Docker ensures your app runs the same everywhere — your laptop, your colleague's machine, and production servers. Every senior developer must know Docker basics.",
+            "code": "# Dockerfile — the recipe for your container\n\n# Stage 1: Build\nFROM python:3.11-slim AS builder\nWORKDIR /app\nCOPY requirements.txt .\nRUN pip install --no-cache-dir -r requirements.txt\n\n# Stage 2: Production (smaller image)\nFROM python:3.11-slim\nWORKDIR /app\nCOPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages\nCOPY . .\n\n# Don't run as root in production\nRUN useradd --create-home appuser\nUSER appuser\n\nEXPOSE 8000\nCMD [\"python\", \"app.py\"]\n\n# Build and run:\n# docker build -t myapp .\n# docker run -p 8000:8000 myapp\n\n# .dockerignore file (like .gitignore):\n# __pycache__\n# *.pyc\n# .env\n# venv/\n# .git",
+            "tip": "Multi-stage builds keep images small. Stage 1 installs dependencies, Stage 2 copies only what's needed. This can reduce image size from 1GB to 100MB."
+          },
+          {
+            "heading": "CI/CD — Automated Testing with GitHub Actions",
+            "content": "CI/CD automatically runs tests, lints code, and deploys when you push to GitHub. No professional team ships code without CI/CD.",
+            "code": "# File: .github/workflows/python-ci.yml\n\nname: Python CI\n\non:\n  push:\n    branches: [main]\n  pull_request:\n    branches: [main]\n\njobs:\n  test:\n    runs-on: ubuntu-latest\n\n    steps:\n    - uses: actions/checkout@v4\n\n    - name: Set up Python\n      uses: actions/setup-python@v5\n      with:\n        python-version: '3.11'\n\n    - name: Install dependencies\n      run: |\n        python -m pip install --upgrade pip\n        pip install -r requirements.txt\n        pip install pytest flake8 mypy\n\n    - name: Lint with flake8\n      run: flake8 . --max-line-length=120\n\n    - name: Type check with mypy\n      run: mypy . --ignore-missing-imports\n\n    - name: Run tests\n      run: pytest -v --tb=short\n\n# This runs automatically on every push!\n# Green checkmark = all tests pass\n# Red X = something broke — fix before merging",
+            "tip": "Set up CI/CD on Day 1 of any project. It catches bugs before they reach production. Even solo developers should use it."
+          },
+          {
+            "heading": "Profiling & Debugging — Find Bottlenecks",
+            "content": "Before optimizing, MEASURE. Premature optimization is the root of all evil. Use profiling tools to find what's actually slow.",
+            "code": "# timeit — measure small code snippets\nimport timeit\n\n# Which is faster: list comprehension or map?\nt1 = timeit.timeit('[x**2 for x in range(1000)]', number=10000)\nt2 = timeit.timeit('list(map(lambda x: x**2, range(1000)))', number=10000)\nprint(f'Comprehension: {t1:.4f}s')\nprint(f'Map: {t2:.4f}s')\n# Comprehension is usually faster!\n\n# cProfile — profile entire program\nimport cProfile\n\ndef slow_function():\n    total = 0\n    for i in range(1000000):\n        total += i ** 2\n    return total\n\ncProfile.run('slow_function()')\n# Shows: number of calls, time per call, cumulative time\n\n# Memory profiling\n# pip install memory_profiler\nfrom memory_profiler import profile\n\n@profile\ndef memory_heavy():\n    big_list = [i for i in range(1000000)]\n    big_dict = {i: i**2 for i in range(1000000)}\n    return len(big_list) + len(big_dict)\n\n# pdb — interactive debugger\nimport pdb\n\ndef buggy_function(data):\n    pdb.set_trace()  # Execution pauses here\n    # Or use: breakpoint()  # Python 3.7+\n    result = process(data)\n    return result\n# Commands: n(next), s(step into), c(continue), p(print), q(quit)",
+            "tip": "Use timeit for micro-benchmarks, cProfile for finding bottlenecks in large programs, and memory_profiler when your app uses too much RAM."
+          }
+        ],
+        "key_points": [
+          "Always use virtual environments — never install packages globally",
+          "Type hints catch bugs before runtime — use mypy for static analysis",
+          "Multi-stage Docker builds reduce image size by 90%",
+          "CI/CD runs tests automatically on every push — catches bugs early",
+          "Profile before optimizing — timeit for snippets, cProfile for programs"
+        ]
+      }
+    ],
+    "quiz": [
+      {"id": 1, "question": "What is the output of print(type([]))?", "options": ["<class 'tuple'>", "<class 'list'>", "<class 'dict'>", "<class 'set'>"], "correct": 1, "explanation": "[] creates an empty list, so type([]) returns <class 'list'>", "difficulty": "easy"},
+      {"id": 2, "question": "What does 'hello'[::-1] return?", "options": ["'hello'", "'olleh'", "'h'", "Error"], "correct": 1, "explanation": "[::-1] reverses the string using slice with step -1", "difficulty": "easy"},
+      {"id": 3, "question": "Which of these is immutable?", "options": ["List", "Dictionary", "Set", "Tuple"], "correct": 3, "explanation": "Tuples cannot be modified after creation. Lists, dicts, and sets are mutable.", "difficulty": "easy"},
+      {"id": 4, "question": "x = [1,2,3]; y = x; y.append(4); print(len(x))", "options": ["3", "4", "Error", "None"], "correct": 1, "explanation": "y = x makes y reference the same list. Modifying y also modifies x.", "difficulty": "easy"},
+      {"id": 5, "question": "dict.get('key', 'default') when key missing?", "options": ["KeyError", "None", "Returns 'default'", "False"], "correct": 2, "explanation": ".get() returns the default value if key not found, unlike dict['key'] which raises KeyError.", "difficulty": "easy"},
+      {"id": 6, "question": "What is bool('')?", "options": ["True", "False", "None", "Error"], "correct": 1, "explanation": "Empty string is falsy. Empty list, dict, set, 0, None are also falsy.", "difficulty": "easy"},
+      {"id": 7, "question": "Which adds element to END of list?", "options": ["list.add()", "list.insert()", "list.append()", "list.extend()"], "correct": 2, "explanation": "append() adds single element at end. extend() adds multiple. insert() adds at index. add() is for sets.", "difficulty": "easy"},
+      {"id": 8, "question": "Correct way to create empty set?", "options": ["s = {}", "s = set()", "s = []", "s = ()"], "correct": 1, "explanation": "{} creates empty dict, not set. set() is correct for empty set.", "difficulty": "easy"},
+      {"id": 9, "question": "print(2 ** 3 ** 2) output?", "options": ["64", "512", "36", "8"], "correct": 1, "explanation": "** is right-associative. 2 ** (3 ** 2) = 2 ** 9 = 512", "difficulty": "easy"},
+      {"id": 10, "question": "What does enumerate() return?", "options": ["Only indices", "Only values", "Tuples of (index, value)", "A dictionary"], "correct": 2, "explanation": "enumerate() returns iterator of (index, element) tuples.", "difficulty": "easy"},
+      {"id": 11, "question": "def func(a, b=[]): b.append(a); return b — func(1) then func(2)?", "options": ["[1] then [2]", "[1] then [1,2]", "[1,2] then [1,2]", "Error"], "correct": 1, "explanation": "Mutable default arguments are shared across calls. Same list b is reused.", "difficulty": "medium"},
+      {"id": 12, "question": "@staticmethod vs @classmethod?", "options": ["No difference", "classmethod gets cls, staticmethod doesn't", "staticmethod gets cls", "Both get instance"], "correct": 1, "explanation": "@classmethod receives cls (the class). @staticmethod receives no implicit first parameter.", "difficulty": "medium"},
+      {"id": 13, "question": "x = [1,2,3,4,5]; print(x[1:4:2])?", "options": ["[2,3,4]", "[2,4]", "[1,3,5]", "[2,3]"], "correct": 1, "explanation": "x[1:4:2] — start 1, end before 4, step 2. Indices 1 and 3 = values 2 and 4.", "difficulty": "medium"},
+      {"id": 14, "question": "Correct way to copy list without reference?", "options": ["new = old", "new = old[:]", "new = old.copy()", "Both B and C"], "correct": 3, "explanation": "old[:], old.copy(), and list(old) create shallow copies. new = old just creates another reference.", "difficulty": "medium"},
+      {"id": 15, "question": "What does *args represent?", "options": ["Required argument", "Tuple of variable positional args", "Dict of keyword args", "List of args"], "correct": 1, "explanation": "*args collects extra positional arguments into a tuple. **kwargs collects keyword args into dict.", "difficulty": "medium"},
+      {"id": 16, "question": "[i for i in range(5) if i % 2 == 0] output?", "options": ["[0,2,4]", "[1,3,5]", "[0,1,2,3,4]", "[2,4]"], "correct": 0, "explanation": "Filters even numbers from range(5). 0, 2, 4 are even.", "difficulty": "medium"},
+      {"id": 17, "question": "What is a generator?", "options": ["Returns a list", "Uses yield for lazy values", "Generates objects", "Random number module"], "correct": 1, "explanation": "Generators use yield to produce values one at a time, saving memory.", "difficulty": "medium"},
+      {"id": 18, "question": "a={1,2,3}; b={2,3,4}; print(a & b)?", "options": ["{1,2,3,4}", "{2,3}", "{1,4}", "Error"], "correct": 1, "explanation": "& is intersection — elements common to both sets.", "difficulty": "medium"},
+      {"id": 19, "question": "What happens with 'with open()' if exception occurs?", "options": ["File stays open", "File auto-closes", "Program crashes", "File deleted"], "correct": 1, "explanation": "Context manager's __exit__ is called even if exception occurs, closing the file.", "difficulty": "medium"},
+      {"id": 20, "question": "nonlocal x in inner function does what?", "options": ["Creates new x", "Modifies enclosing scope's x", "Error", "Makes x global"], "correct": 1, "explanation": "nonlocal allows inner function to modify variable in enclosing scope.", "difficulty": "medium"},
+      {"id": 21, "question": "D(B,C) with super().__init__() — MRO order?", "options": ["D B A", "D B C A", "D B A C A", "D C B A"], "correct": 1, "explanation": "Python MRO (C3 linearization): D → B → C → A. Each __init__ called once.", "difficulty": "hard"},
+      {"id": 22, "question": "[lambda i=i: i for i in range(5)] — call each?", "options": ["[4,4,4,4,4]", "[0,1,2,3,4]", "Error", "[0,0,0,0,0]"], "correct": 1, "explanation": "Default arg i=i captures current value at each iteration. Without it, all would be 4.", "difficulty": "hard"},
+      {"id": 23, "question": "What does __slots__ do?", "options": ["Limits methods", "Restricts attributes + saves memory", "Makes class faster", "Prevents inheritance"], "correct": 1, "explanation": "__slots__ replaces per-instance __dict__ with fixed attributes, using 40-50% less memory.", "difficulty": "hard"},
+      {"id": 24, "question": "print(0.1 + 0.2 == 0.3)?", "options": ["True", "False", "Error", "None"], "correct": 1, "explanation": "Floating point precision: 0.1 + 0.2 = 0.30000000000000004. Use math.isclose() instead.", "difficulty": "hard"},
+      {"id": 25, "question": "What is a metaclass?", "options": ["Multiple inheritance class", "Class whose instances are classes", "Abstract class", "Static class"], "correct": 1, "explanation": "Metaclass defines how classes are created. type is the default metaclass.", "difficulty": "hard"},
+      {"id": 26, "question": "Counter('abracadabra').most_common(2)?", "options": ["[('a',5),('b',2)]", "[('a',5),('r',2)]", "{'a':5,'b':2}", "Error"], "correct": 0, "explanation": "'a' appears 5 times, 'b' 2 times. Why 'b' over 'r' (both 2)? Counter preserves insertion order since Python 3.7+ — 'b' appears before 'r'.", "difficulty": "hard"},
+      {"id": 27, "question": "GIL workaround for CPU-bound tasks?", "options": ["Use multiprocessing", "GIL makes Python faster", "Cannot bypass", "Use garbage collector"], "correct": 0, "explanation": "GIL allows only one thread for Python bytecode. Use multiprocessing for CPU tasks. Threading works for I/O because GIL releases during I/O.", "difficulty": "hard"},
+      {"id": 28, "question": "g=gen(); next(g); next(g) — yields 1,2,3?", "options": ["1 then 1", "1 then 2", "3 then 3", "Error"], "correct": 1, "explanation": "Each next() resumes generator from where it left off. First yields 1, second yields 2.", "difficulty": "hard"},
+      {"id": 29, "question": "Python garbage collection uses?", "options": ["Only reference counting", "Reference counting + cyclic GC", "Never frees memory", "Manual free needed"], "correct": 1, "explanation": "Reference counting for most objects. Cyclic GC handles circular references that reference counting misses.", "difficulty": "hard"},
+      {"id": 30, "question": "with MyClass() as obj — __exit__ sets value=0. print(obj.value) after with?", "options": ["42 then 42", "42 then 0", "0 then 0", "Error"], "correct": 1, "explanation": "Inside with: value is 42. After with: __exit__ sets to 0. Variable obj still exists outside with block.", "difficulty": "hard"},
+      {"id": 31, "question": "What is the time complexity of 'x in my_list'?", "options": ["O(1)", "O(log N)", "O(N)", "O(N²)"], "correct": 2, "explanation": "List membership check scans every element — O(N). Use set for O(1) lookup.", "difficulty": "hard"},
+      {"id": 32, "question": "deque.popleft() vs list.pop(0) — which is faster?", "options": ["list.pop(0)", "Same speed", "deque.popleft()", "Depends on size"], "correct": 2, "explanation": "deque.popleft() is O(1). list.pop(0) is O(N) because it shifts all remaining elements.", "difficulty": "hard"},
+      {"id": 33, "question": "itertools.groupby requires input to be?", "options": ["A list", "Sorted by the key", "A dictionary", "Less than 1000 items"], "correct": 1, "explanation": "groupby only groups CONSECUTIVE equal elements. Input must be sorted by the grouping key first.", "difficulty": "hard"},
+      {"id": 34, "question": "What is typing.Protocol used for?", "options": ["Network protocols", "Duck typing with type safety", "Encryption", "File formats"], "correct": 1, "explanation": "Protocol enables structural subtyping — if a class has the required methods, it satisfies the Protocol without explicit inheritance.", "difficulty": "hard"},
+      {"id": 35, "question": "What does @patch do in testing?", "options": ["Fixes bugs", "Replaces objects with mocks", "Patches security holes", "Updates code"], "correct": 1, "explanation": "@patch temporarily replaces a real object with a mock during tests, so you don't hit real APIs or databases.", "difficulty": "hard"},
+      {"id": 36, "question": "Which is an anti-pattern in Python?", "options": ["Using list comprehension", "String += in a loop", "Using enumerate()", "Using f-strings"], "correct": 1, "explanation": "String concatenation with += in a loop is O(N²) because strings are immutable — each += creates a new string. Use ''.join() instead.", "difficulty": "hard"},
+      {"id": 37, "question": "Multi-stage Docker build is used to?", "options": ["Run multiple apps", "Reduce final image size", "Install more packages", "Speed up builds"], "correct": 1, "explanation": "Stage 1 installs dependencies and builds. Stage 2 copies only what's needed. This can reduce image from 1GB to 100MB.", "difficulty": "hard"},
+      {"id": 38, "question": "asyncio.gather() does what?", "options": ["Runs tasks sequentially", "Runs tasks concurrently and waits for all", "Cancels tasks", "Creates threads"], "correct": 1, "explanation": "gather() runs multiple coroutines concurrently and returns when all complete. Total time = longest task, not sum of all.", "difficulty": "hard"},
+      {"id": 39, "question": "What is Dependency Injection?", "options": ["Installing pip packages", "Passing dependencies as arguments instead of hardcoding", "Injecting SQL", "Loading modules"], "correct": 1, "explanation": "DI means a class receives its dependencies from outside rather than creating them internally. This makes code testable and flexible.", "difficulty": "hard"},
+      {"id": 40, "question": "pip freeze > requirements.txt does what?", "options": ["Freezes Python", "Saves all installed packages with versions to a file", "Deletes packages", "Updates packages"], "correct": 1, "explanation": "pip freeze lists all installed packages with exact versions. Redirecting to requirements.txt lets others recreate your exact environment.", "difficulty": "medium"}
+    ]
+  }

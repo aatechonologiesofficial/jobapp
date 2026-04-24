@@ -1,52 +1,41 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { supabase } from '../lib/supabase'
 
 export default function Login() {
   const [email, setEmail] = useState('')
-  const [otp, setOtp] = useState('')
-  const [step, setStep] = useState('login')
   const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState('')
-  const [turnstileToken, setTurnstileToken] = useState(null)
+  const [sent, setSent] = useState(false)
+  const [error, setError] = useState('')
 
-  useEffect(() => {
-    const script = document.createElement('script')
-    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad'
-    script.async = true
-    document.head.appendChild(script)
-    window.onTurnstileLoad = () => {
-      if (document.getElementById('turnstile-container')) {
-        window.turnstile.render('#turnstile-container', {
-          sitekey: '0x4AAAAAAC6H1V1ER1tT2Pwu',
-          callback: (token) => setTurnstileToken(token),
-          'refresh-expired': 'auto'
-        })
-      }
-    }
-  }, [])
-
-  const sendOTP = async () => {
-    if (!turnstileToken && window.location.hostname !== 'localhost') {
-      setMessage('Security check in progress... try again in a moment.')
-      return
-    }
+  const handleEmailLogin = async (e) => {
+    e.preventDefault()
     setLoading(true)
-    setMessage('')
-    const { error } = await supabase.auth.signInWithOtp({ email })
-    if (error) {
-      setMessage(error.message)
-    } else {
-      setStep('verify')
-      setMessage('OTP sent! Check your inbox.')
+    setError('')
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: window.location.origin }
+      })
+      if (error) throw error
+      setSent(true)
+    } catch (err) {
+      setError(err.message)
     }
     setLoading(false)
   }
 
-  const verifyOTP = async () => {
+  const handleGoogleLogin = async () => {
     setLoading(true)
-    setMessage('')
-    const { error } = await supabase.auth.verifyOtp({ email, token: otp, type: 'email' })
-    if (error) setMessage(error.message)
+    setError('')
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: window.location.origin }
+      })
+      if (error) throw error
+    } catch (err) {
+      setError(err.message)
+    }
     setLoading(false)
   }
 
@@ -55,61 +44,69 @@ export default function Login() {
       <div className="login-bg">
         <div className="orb orb-1"></div>
         <div className="orb orb-2"></div>
-        <div className="orb orb-3"></div>
       </div>
-      <div className="login-container">
-        <div className="login-brand">
-          <div className="brand-icon">⚡</div>
-          <h1>JobApp</h1>
-          <p className="tagline">Your career command center</p>
+      <div className="login-card">
+        <div className="login-header">
+          <h1>⚡ JobApp</h1>
+          <p>Your AI-Powered Career Command Center</p>
         </div>
 
-        {step === 'login' && (
-          <div className="login-card">
-            <h2>Welcome, Commander!</h2>
-            <p>Enter your email to get started</p>
-            <div className="input-group">
-              <span className="input-icon">📧</span>
-              <input
-                type="email"
-                placeholder="Your email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && sendOTP()}
-              />
+        {!sent ? (
+          <>
+            {/* Google Sign-In Button */}
+            <button onClick={handleGoogleLogin} disabled={loading}
+              style={{
+                width: '100%', padding: '14px', background: 'white',
+                border: '1px solid var(--border)', borderRadius: '12px',
+                color: '#333', fontSize: '0.95rem', fontWeight: '600',
+                fontFamily: 'Inter, sans-serif', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                gap: '10px', marginBottom: '20px', transition: 'all 0.3s'
+              }}>
+              <svg width="20" height="20" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+              </svg>
+              {loading ? 'Signing in...' : 'Continue with Google'}
+            </button>
+
+            {/* Divider */}
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: '12px',
+              marginBottom: '20px', color: 'var(--text2)', fontSize: '0.8rem'
+            }}>
+              <div style={{ flex: 1, height: '1px', background: 'var(--border)' }}></div>
+              <span>or use email</span>
+              <div style={{ flex: 1, height: '1px', background: 'var(--border)' }}></div>
             </div>
-            <div id="turnstile-container"></div>
-            <button className="btn-primary" onClick={sendOTP} disabled={loading || !email}>
-              {loading ? <span className="spinner"></span> : 'Send OTP →'}
+
+            {/* Email Login */}
+            <form onSubmit={handleEmailLogin}>
+              <div className="login-field">
+                <label>Email Address</label>
+                <input type="email" placeholder="you@example.com" value={email}
+                  onChange={(e) => setEmail(e.target.value)} required />
+              </div>
+              {error && <p className="login-error">{error}</p>}
+              <button className="login-btn" type="submit" disabled={loading}>
+                {loading ? 'Sending...' : 'Send Magic Link'}
+              </button>
+            </form>
+          </>
+        ) : (
+          <div className="login-sent">
+            <div className="login-sent-icon">✉️</div>
+            <h3>Check your email!</h3>
+            <p>We sent a login link to <strong>{email}</strong></p>
+            <button className="login-btn" onClick={() => setSent(false)} style={{ marginTop: '16px', background: 'var(--surface2)' }}>
+              ← Try different email
             </button>
           </div>
         )}
 
-        {step === 'verify' && (
-          <div className="login-card">
-            <h2>Check Your Email 📬</h2>
-            <p>Enter the code sent to <strong>{email}</strong></p>
-            <div className="input-group">
-              <span className="input-icon">🔑</span>
-              <input
-                type="text"
-                placeholder="Enter OTP code"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && verifyOTP()}
-                maxLength={8}
-              />
-            </div>
-            <button className="btn-primary" onClick={verifyOTP} disabled={loading || !otp}>
-              {loading ? <span className="spinner"></span> : 'Verify & Login →'}
-            </button>
-            <button className="btn-ghost" onClick={() => setStep('login')}>
-              ← Back
-            </button>
-          </div>
-        )}
-
-        {message && <div className="toast">{message}</div>}
+        <p className="login-footer">No password needed. Secure & fast.</p>
       </div>
     </div>
   )
