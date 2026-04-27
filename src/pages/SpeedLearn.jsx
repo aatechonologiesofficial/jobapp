@@ -3,7 +3,7 @@ import { useState } from 'react'
 const SKILLS = [
   { id: 'python', name: 'Python', icon: '🐍', file: '/data/python.json', available: true },
   { id: 'javascript', name: 'JavaScript', icon: '⚡', file: '/data/javascript.json', available: true },
-  { id: 'sql', name: 'SQL', icon: '🗃️', file: '/data/sql.json', available: false },
+  { id: 'sql', name: 'SQL', icon: '🗃️', file: '/data/sql.json', available: true },
   { id: 'react', name: 'React', icon: '⚛️', file: '/data/react.json', available: false },
   { id: 'java', name: 'Java', icon: '☕', file: '/data/java.json', available: false },
 ]
