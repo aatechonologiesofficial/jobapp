@@ -1,12 +1,74 @@
 import { useState } from 'react'
 
-const SKILLS = [
-  { id: 'python', name: 'Python', icon: '🐍', file: '/data/python.json', available: true },
-  { id: 'javascript', name: 'JavaScript', icon: '⚡', file: '/data/javascript.json', available: true },
-  { id: 'sql', name: 'SQL', icon: '🗃️', file: '/data/sql.json', available: true },
-  { id: 'react', name: 'React', icon: '⚛️', file: '/data/react.json', available: true },
-  { id: 'java', name: 'Java', icon: '☕', file: '/data/java.json', available: false },
+const SKILL_SEGMENTS = [
+  {
+    label: '💻 Languages & Frameworks',
+    skills: [
+      { id: 'python', name: 'Python', icon: '🐍', file: '/data/python.json', available: true },
+      { id: 'javascript', name: 'JavaScript', icon: '⚡', file: '/data/javascript.json', available: true },
+      { id: 'java', name: 'Java', icon: '☕', file: '/data/java.json', available: true },
+      { id: 'react', name: 'React', icon: '⚛️', file: '/data/react.json', available: true },
+      { id: 'htmlcss', name: 'HTML/CSS', icon: '🎨', file: '/data/htmlcss.json', available: true },
+      { id: 'nodejs', name: 'Node.js', icon: '🟢', file: '/data/nodejs.json', available: false },
+      { id: 'cpp', name: 'C++', icon: '🔵', file: '/data/cpp.json', available: false },
+      { id: 'flutter', name: 'Flutter', icon: '📱', file: '/data/flutter.json', available: false },
+      { id: 'csharp', name: 'C# & .NET', icon: '🟣', file: '/data/csharp.json', available: false },
+      { id: 'php', name: 'PHP & Laravel', icon: '🐘', file: '/data/php.json', available: false },
+    ]
+  },
+  {
+    label: '🎯 Placement Survival',
+    skills: [
+      { id: 'sql', name: 'SQL', icon: '🗃️', file: '/data/sql.json', available: true },
+      { id: 'dsa', name: 'DSA Patterns', icon: '🔥', file: '/data/dsa.json', available: false },
+      { id: 'aptitude', name: 'Aptitude & Reasoning', icon: '🧠', file: '/data/aptitude.json', available: false },
+      { id: 'git', name: 'Git & GitHub', icon: '🔀', file: '/data/git.json', available: false },
+      { id: 'corporate', name: 'Corporate Etiquette', icon: '💼', file: '/data/corporate.json', available: false },
+    ]
+  },
+  {
+    label: '🖥️ Core CS (Campus Savers)',
+    skills: [
+      { id: 'os', name: 'Operating Systems', icon: '⚙️', file: '/data/os.json', available: false },
+      { id: 'dbms', name: 'DBMS', icon: '🗄️', file: '/data/dbms.json', available: false },
+      { id: 'cn', name: 'Computer Networks', icon: '🌐', file: '/data/cn.json', available: false },
+    ]
+  },
+  {
+    label: '🚀 Modern Tech',
+    skills: [
+      { id: 'aws', name: 'AWS & Cloud', icon: '☁️', file: '/data/aws.json', available: false },
+      { id: 'cloud', name: 'Cloud Computing', icon: '🌩️', file: '/data/cloud.json', available: false },
+      { id: 'systemdesign', name: 'System Design', icon: '🏗️', file: '/data/systemdesign.json', available: false },
+      { id: 'prompt', name: 'Prompt Engineering', icon: '🤖', file: '/data/prompt.json', available: false },
+      { id: 'analytics', name: 'Data Analytics', icon: '📊', file: '/data/analytics.json', available: false },
+    ]
+  },
+  {
+    label: '🗣️ Interview & Career',
+    skills: [
+      { id: 'interview', name: 'Interview Prep', icon: '🎤', file: '/data/interview.json', available: false },
+      { id: 'communication', name: 'Communication', icon: '💬', file: '/data/communication.json', available: false },
+      { id: 'resume', name: 'Resume Writing', icon: '✍️', file: '/data/resume.json', available: false },
+      { id: 'excel', name: 'Excel & Office', icon: '📈', file: '/data/excel.json', available: false },
+    ]
+  },
+  {
+    label: '🧠 Life & Soft Skills',
+    skills: [
+      { id: 'leadership', name: 'Leadership', icon: '👔', file: '/data/leadership.json', available: false },
+      { id: 'finance', name: 'Financial Literacy', icon: '💰', file: '/data/finance.json', available: false },
+      { id: 'workplace', name: 'Workplace Survival', icon: '🏢', file: '/data/workplace.json', available: false },
+      { id: 'branding', name: 'Personal Branding', icon: '🌟', file: '/data/branding.json', available: false },
+      { id: 'entrepreneur', name: 'Entrepreneurship', icon: '🚀', file: '/data/entrepreneur.json', available: false },
+      { id: 'mental', name: 'Mental Health', icon: '🧘', file: '/data/mental.json', available: false },
+      { id: 'industry', name: 'Industry Insider', icon: '🏭', file: '/data/industry.json', available: false },
+      { id: 'commmaster', name: 'Communication Mastery', icon: '🗣️', file: '/data/commmaster.json', available: false },
+    ]
+  }
 ]
+
+const ALL_SKILLS = SKILL_SEGMENTS.flatMap(seg => seg.skills)
 
 export default function SpeedLearn() {
   const [view, setView] = useState('skills')
@@ -22,6 +84,9 @@ export default function SpeedLearn() {
   const [quizFilter, setQuizFilter] = useState('all')
   const [quizType, setQuizType] = useState('general')
   const [quizQuestions, setQuizQuestions] = useState([])
+
+  const totalSkills = ALL_SKILLS.length
+  const availableCount = ALL_SKILLS.filter(s => s.available).length
 
   const loadSkill = async (skill) => {
     if (!skill.available) return
@@ -131,28 +196,54 @@ export default function SpeedLearn() {
           fontSize: '1.5rem', fontWeight: '700',
           fontFamily: 'Cormorant Garamond, serif', marginBottom: '6px'
         }}>⚡ Speed Learn</h2>
-        <p style={{ color: 'var(--text2)', fontSize: '0.9rem', marginBottom: '24px' }}>
+        <p style={{ color: 'var(--text2)', fontSize: '0.85rem', marginBottom: '6px' }}>
           Master job-ready skills with bite-sized modules and quizzes
         </p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
-          {SKILLS.map(s => (
-            <div key={s.id} onClick={() => loadSkill(s)} style={{
-              padding: '20px', background: 'var(--surface)',
-              border: '1px solid var(--border)', borderRadius: '16px',
-              cursor: s.available ? 'pointer' : 'default',
-              opacity: s.available ? 1 : 0.5, textAlign: 'center'
+        <p style={{
+          color: 'var(--accent)', fontSize: '0.8rem', fontWeight: '600',
+          marginBottom: '24px'
+        }}>
+          {totalSkills} Skills • {totalSkills * 10} Modules • {totalSkills * 90}+ Questions — {availableCount} Available
+        </p>
+
+        {SKILL_SEGMENTS.map((segment, segIdx) => (
+          <div key={segIdx} style={{ marginBottom: '24px' }}>
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: '10px',
+              marginBottom: '12px'
             }}>
-              <div style={{ fontSize: '2rem', marginBottom: '8px' }}>{s.icon}</div>
-              <div style={{ fontSize: '0.95rem', fontWeight: '600', marginBottom: '4px' }}>{s.name}</div>
-              <div style={{
-                fontSize: '0.72rem', fontWeight: '500',
-                color: s.available ? 'var(--success)' : 'var(--accent)'
-              }}>
-                {s.available ? 'Available' : 'Coming Soon'}
-              </div>
+              <div style={{ flex: 1, height: '1px', background: 'var(--border)' }}></div>
+              <span style={{
+                fontSize: '0.82rem', fontWeight: '700',
+                color: 'var(--accent)', whiteSpace: 'nowrap'
+              }}>{segment.label}</span>
+              <div style={{ flex: 1, height: '1px', background: 'var(--border)' }}></div>
             </div>
-          ))}
-        </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
+              {segment.skills.map(skill => (
+                <div key={skill.id} onClick={() => loadSkill(skill)} style={{
+                  padding: '16px', background: 'var(--surface)',
+                  border: '1px solid var(--border)', borderRadius: '14px',
+                  cursor: skill.available ? 'pointer' : 'default',
+                  opacity: skill.available ? 1 : 0.5, textAlign: 'center',
+                  transition: 'all 0.3s'
+                }}>
+                  <div style={{ fontSize: '1.8rem', marginBottom: '6px' }}>{skill.icon}</div>
+                  <div style={{
+                    fontSize: '0.88rem', fontWeight: '600',
+                    marginBottom: '4px', color: 'var(--text)'
+                  }}>{skill.name}</div>
+                  <div style={{
+                    fontSize: '0.68rem', fontWeight: '500',
+                    color: skill.available ? 'var(--success)' : 'var(--text2)'
+                  }}>
+                    {skill.available ? '✅ Available' : '🔒 Coming Soon'}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
         {loading && (
           <p style={{ textAlign: 'center', marginTop: '20px', color: 'var(--text2)' }}>Loading...</p>
         )}
