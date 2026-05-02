@@ -20,7 +20,7 @@ const SKILL_SEGMENTS = [
     label: '🎯 Placement Survival',
     skills: [
       { id: 'sql', name: 'SQL', icon: '🗃️', file: '/data/sql.json', available: true },
-      { id: 'dsa', name: 'DSA Patterns', icon: '🔥', file: '/data/dsa.json', available: false },
+      { id: 'dsa', name: 'DSA Patterns', icon: '🔥', file: '/data/dsa.json', available: true },
       { id: 'aptitude', name: 'Aptitude & Reasoning', icon: '🧠', file: '/data/aptitude.json', available: false },
       { id: 'git', name: 'Git & GitHub', icon: '🔀', file: '/data/git.json', available: true },
       { id: 'corporate', name: 'Corporate Etiquette', icon: '💼', file: '/data/corporate.json', available: false },
