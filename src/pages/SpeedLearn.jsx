@@ -22,7 +22,7 @@ const SKILL_SEGMENTS = [
       { id: 'sql', name: 'SQL', icon: '🗃️', file: '/data/sql.json', available: true },
       { id: 'dsa', name: 'DSA Patterns', icon: '🔥', file: '/data/dsa.json', available: false },
       { id: 'aptitude', name: 'Aptitude & Reasoning', icon: '🧠', file: '/data/aptitude.json', available: false },
-      { id: 'git', name: 'Git & GitHub', icon: '🔀', file: '/data/git.json', available: false },
+      { id: 'git', name: 'Git & GitHub', icon: '🔀', file: '/data/git.json', available: true },
       { id: 'corporate', name: 'Corporate Etiquette', icon: '💼', file: '/data/corporate.json', available: false },
     ]
   },
